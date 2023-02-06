@@ -10,7 +10,7 @@ config.plugins.push(
     }],
     ["@semantic-release/github", {
         "assets": [
-            { "path": "build/libs/*.jar" },
+            { "path": "*/build/libs/*.jar" },
         ]
     }],
     ["@semantic-release/npm", {
