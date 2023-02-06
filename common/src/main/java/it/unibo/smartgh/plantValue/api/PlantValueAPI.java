@@ -12,15 +12,17 @@ public interface PlantValueAPI {
 
     /**
      * Get the future representing the current value.
+     * @param  greenhouseId represent the id of the greenhouse.
      * @return the future representing the current value.
      */
     Future<PlantValue> getCurrentValue(String greenhouseId);
 
     /**
      * Insert the new plant value.
+     * @param value represent the value to register.
      * @return the future representing insertion of the new value.
      */
-    Future<Void> postValue(PlantValue brightnessValue);
+    Future<Void> postValue(PlantValue value);
 
     /**
      * Get the future representing the history of plant values.

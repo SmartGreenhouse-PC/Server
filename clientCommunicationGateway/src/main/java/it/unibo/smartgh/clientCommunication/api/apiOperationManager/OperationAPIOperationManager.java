@@ -87,6 +87,8 @@ public class OperationAPIOperationManager {
     /**
      * Send the request to the Operation service, to gets the operations performed on a specific greenhouse in a certain period of time.
      * @param greenhouseID the greenhouse identifier.
+     * @param from the date of start.
+     * @param to the date of finish.
      * @param limit the number of operations we want to retrieve.
      * @return a {@link io.vertx.core.Future}, containing the operations required.
      */
@@ -116,6 +118,11 @@ public class OperationAPIOperationManager {
         return p.future();
     }
 
+    /**
+     * Posts a new operation performed.
+     * @param operation the operation executed.
+     * @return a {@link Future} representing the operation required.
+     */
     public Future<Void> postNewOperation(JsonObject operation) {
         Promise<Void> p = Promise.promise();
         httpClient.post(OPERATION_SERVICE_PORT, OPERATION_SERVICE_HOST, OPERATION_BASE_PATH)

@@ -17,6 +17,8 @@ public class GreenhouseService extends AbstractVerticle {
 
     /**
      * Constructor of humidity service.
+     * @param host the host address.
+     * @param port the port to which connect.
      * @param model the greenhouse model.
      */
     public GreenhouseService(String host, int port, GreenhouseAPI model) {

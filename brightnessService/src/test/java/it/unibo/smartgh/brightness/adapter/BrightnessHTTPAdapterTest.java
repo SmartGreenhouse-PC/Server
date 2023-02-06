@@ -55,20 +55,14 @@ public class BrightnessHTTPAdapterTest {
         System.out.println("Brightness service initializing");
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
         Double value = 900.0;
-        PlantValue plantValue = new PlantValueImpl();
-        plantValue.setGreenhouseId(greenhouseId);
-        plantValue.setValue(value);
         try {
             Date date1 = formatter.parse(formatter.format(Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC))));
             Date date2 = formatter.parse(formatter.format(Date.from(LocalDateTime.now().plusSeconds(10).toInstant(ZoneOffset.UTC))));
             Date date3 = formatter.parse(formatter.format(Date.from(LocalDateTime.now().plusSeconds(20).toInstant(ZoneOffset.UTC))));
 
-            plantValue.setDate(date1);
-            database.insertPlantValue(plantValue);
-            plantValue.setDate(date2);
-            database.insertPlantValue(plantValue);
-            plantValue.setDate(date3);
-            database.insertPlantValue(plantValue);
+            database.insertPlantValue(new PlantValueImpl(greenhouseId, date1, value));
+            database.insertPlantValue(new PlantValueImpl(greenhouseId, date2, value));
+            database.insertPlantValue(new PlantValueImpl(greenhouseId, date3, value));
 
         } catch (ParseException e) {
             throw new RuntimeException(e);
@@ -144,10 +138,7 @@ public class BrightnessHTTPAdapterTest {
         int expectedStatusCode = 201;
         try {
             Date date = formatter.parse(formatter.format(Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC))));
-            PlantValue plantValue = new PlantValueImpl();
-            plantValue.setGreenhouseId(greenhouseId);
-            plantValue.setValue(value);
-            plantValue.setDate(date);
+            PlantValue plantValue = new PlantValueImpl(greenhouseId, date, value);
             String operationPath = "/brightness";
             client.post(SERVICE_PORT, SERVICE_HOST, operationPath)
                     .putHeader("content-type", "application/json")

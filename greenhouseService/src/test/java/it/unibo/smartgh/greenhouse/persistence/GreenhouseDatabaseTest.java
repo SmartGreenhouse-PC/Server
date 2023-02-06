@@ -3,8 +3,7 @@ package it.unibo.smartgh.greenhouse.persistence;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Greenhouse;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.GreenhouseImpl;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Modality;
-import it.unibo.smartgh.greenhouse.entity.plant.Plant;
-import it.unibo.smartgh.greenhouse.entity.plant.PlantBuilder;
+import it.unibo.smartgh.greenhouse.entity.plant.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -23,25 +22,33 @@ public class GreenhouseDatabaseTest {
     @Test
     public void testGetGreenhouse() {
         Greenhouse res = greenhouseDatabase.getGreenhouse(ID_AUTOMATIC);
-        Map<String,String> units = new HashMap<>(){{
-            put("temperature", "° C");
-            put("humidity", "%");
-            put("soilMoisture", "%");
-            put("brightness", "Lux");
+        Map<ParameterType, Parameter> parameters = new HashMap<>(){{
+            put(ParameterType.TEMPERATURE, new ParameterBuilder("temperature")
+                    .min(8.0)
+                    .max(35.0)
+                    .unit("° C")
+                    .build());
+            put(ParameterType.BRIGHTNESS, new ParameterBuilder("brightness")
+                    .min(4200.0)
+                    .max(130000.0)
+                    .unit("Lux")
+                    .build());
+            put(ParameterType.SOIL_MOISTURE, new ParameterBuilder("soilMoisture")
+                    .min(20.0)
+                    .max(65.0)
+                    .unit("%")
+                    .build());
+            put(ParameterType.HUMIDITY, new ParameterBuilder("humidity")
+                    .min(30.0)
+                    .max(80.0)
+                    .unit("%")
+                    .build());
         }};
         Plant plant = new PlantBuilder("lemon AUTOMATIC")
                 .description("is a species of small evergreen trees in the flowering plant family " +
                         "Rutaceae, native to Asia, primarily Northeast India (Assam), Northern Myanmar or China.")
                 .image("http://www.burkesbackyard.com.au/wp-content/uploads/2014/01/945001_399422270172619_1279327806_n.jpg")
-                .units(units)
-                .minTemperature(8.0)
-                .maxTemperature(35.0)
-                .minBrightness(4200.0)
-                .maxBrightness(130000.0)
-                .minSoilMoisture(20.0)
-                .maxSoilMoisture(65.0)
-                .minHumidity(30.0)
-                .maxHumidity(80.0)
+                .parameters(parameters)
                 .build();
         Greenhouse greenhouse = new GreenhouseImpl(ID_AUTOMATIC, plant, Modality.AUTOMATIC);
         assertEquals(greenhouse.getPlant().getName(), res.getPlant().getName());

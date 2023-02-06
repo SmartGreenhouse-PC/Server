@@ -8,6 +8,7 @@ import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Deserializer for the class {@link PlantValueImpl}.
@@ -17,22 +18,22 @@ public class PlantValueDeserializer  extends GeneralDeserializer implements Json
     @Override
     public PlantValue deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
-        PlantValue plantValue = new PlantValueImpl();
         if(json instanceof JsonObject){
             JsonObject object = (JsonObject) json;
-            plantValue.setGreenhouseId(this.getPropertyAsString(object, "greenhouseId"));
+            Date date;
+            Double value;
+            String greenhouseId = this.getPropertyAsString(object, "greenhouseId");
             try {
                 System.out.println(this.getPropertyAsString(object, "date"));
-                plantValue.setDate(formatter.parse(this.getPropertyAsString(object, "date")));
+                date = formatter.parse(this.getPropertyAsString(object, "date"));
             } catch (ParseException e) {
                 throw new JsonParseException("Not a valid date format (dd/MM/yyyy - HH:mm:ss)");
             }
-            plantValue.setValue(this.getPropertyAs(object, "value", Double.class, context));
+            value = this.getPropertyAs(object, "value", Double.class, context);
+            return new PlantValueImpl(greenhouseId, date, value);
         }else{
-            throw new JsonParseException("Not a valid plant value: " + plantValue);
+            throw new JsonParseException("Not a valid plant value");
         }
-
-        return plantValue;
     }
 
 }

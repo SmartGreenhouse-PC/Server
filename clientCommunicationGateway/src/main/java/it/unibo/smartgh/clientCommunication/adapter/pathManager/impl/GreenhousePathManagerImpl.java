@@ -9,7 +9,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.client.HttpResponse;
 import it.unibo.smartgh.clientCommunication.adapter.pathManager.GreenhousePathManager;
 import it.unibo.smartgh.clientCommunication.api.ClientCommunicationAPI;
-
+import it.unibo.smartgh.clientCommunication.customException.ParameterNotFound;
 
 
 /**
@@ -59,5 +59,19 @@ public class GreenhousePathManagerImpl implements GreenhousePathManager{
             response.setStatusMessage("Internal Server error: cause " + exception.getMessage());
             response.end();
         });
+    }
+
+    @Override
+    public void handlePostNotifyGreenhouseModality(RoutingContext request) {
+        HttpServerResponse response = request.response();
+        response.putHeader("Content-Type", "application/json");
+        Future<Void> future = this.model.postNotifyChangeModality(request.body().asJsonObject());
+
+        future.onSuccess(result -> response.setStatusCode(201).end())
+                .onFailure(exception ->{
+                    response.setStatusCode(500);
+                    response.setStatusMessage("Internal Server error: cause " + exception.getMessage());
+                    response.end();
+                });
     }
 }

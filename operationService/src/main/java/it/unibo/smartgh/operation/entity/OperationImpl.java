@@ -41,18 +41,8 @@ public class OperationImpl implements Operation {
     }
 
     @Override
-    public void setGreenhouseId(String greenhouseId) {
-        this.greenhouseId = greenhouseId;
-    }
-
-    @Override
     public Modality getModality() {
         return modality;
-    }
-
-    @Override
-    public void setModality(Modality modality) {
-        this.modality = modality;
     }
 
     @Override
@@ -61,28 +51,13 @@ public class OperationImpl implements Operation {
     }
 
     @Override
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    @Override
     public String getParameter() {
         return parameter;
     }
 
     @Override
-    public void setParameter(String parameter) {
-        this.parameter = parameter;
-    }
-
-    @Override
     public String getAction() {
         return action;
-    }
-
-    @Override
-    public void setAction(String action) {
-        this.action = action;
     }
 
     @Override

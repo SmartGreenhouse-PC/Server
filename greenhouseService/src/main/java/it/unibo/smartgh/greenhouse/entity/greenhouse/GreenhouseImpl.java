@@ -14,6 +14,7 @@ public class GreenhouseImpl implements Greenhouse{
 
     /**
      * Constructor for the greenhouse entity.
+     * @param id of the greenhouse.
      * @param plant of the greenhouse.
      * @param modality the actual modality of management.
      */

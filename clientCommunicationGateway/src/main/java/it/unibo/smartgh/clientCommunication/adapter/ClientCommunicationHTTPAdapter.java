@@ -26,9 +26,10 @@ public class ClientCommunicationHTTPAdapter extends AbstractAdapter<ClientCommun
     private static int SOCKET_PARAM_PORT;
     private static String SOCKET_HOST;
     private static int SOCKET_OPERATION_PORT;
+    private static int SOCKET_MODALITY_PORT;
     private static final String BASE_PATH = "/clientCommunication";
     private static final String GET_GREENHOUSE_INFO_PATH = BASE_PATH + "/greenhouse";
-
+    private static final String POST_GREENHOUSE_NOTIFY_MODALITY_PATH = BASE_PATH + "/greenhouse/modality/notify";
     private static final String POST_GREENHOUSE_MODALITY_PATH = BASE_PATH + "/greenhouse/modality";
     private static final String PARAMETER_CURRENT_VALUE_PATH = BASE_PATH + "/parameter";
     private static final String GET_PARAMETER_HISTORY_DATA_PATH = BASE_PATH + "/parameter/history";
@@ -68,6 +69,7 @@ public class ClientCommunicationHTTPAdapter extends AbstractAdapter<ClientCommun
         SOCKET_HOST=properties.getProperty("socket.host");
         SOCKET_OPERATION_PORT = Integer.parseInt(properties.getProperty("socketOperation.port"));
         SOCKET_PARAM_PORT = Integer.parseInt(properties.getProperty("socketParam.port"));
+        SOCKET_MODALITY_PORT = Integer.parseInt(properties.getProperty("socketModality.port"));
         this.greenhousePathManager = new GreenhousePathManagerImpl(model);
         this.parametersPathManager = new ParametersPathManagerImpl(model);
         this.operationPathManager = new OperationPathManagerImpl(model);
@@ -82,6 +84,7 @@ public class ClientCommunicationHTTPAdapter extends AbstractAdapter<ClientCommun
             router.route().handler(BodyHandler.create());
 
             router.get(GET_GREENHOUSE_INFO_PATH).handler(this.greenhousePathManager::handleGetGreenhouseInfo);
+            router.post(POST_GREENHOUSE_NOTIFY_MODALITY_PATH).handler(this.greenhousePathManager::handlePostNotifyGreenhouseModality);
             router.post(POST_GREENHOUSE_MODALITY_PATH).handler(this.greenhousePathManager::handlePostGreenhouseModality);
             router.post(PARAMETER_CURRENT_VALUE_PATH).handler(this.parametersPathManager::handlePostParameterCurrentValue);
             router.get(PARAMETER_CURRENT_VALUE_PATH).handler(this.parametersPathManager::handleGetParameterCurrentValue);
@@ -119,6 +122,15 @@ public class ClientCommunicationHTTPAdapter extends AbstractAdapter<ClientCommun
                                 ctx.writeTextMessage(body.body().toString())
                         );
                     }).listen(SOCKET_OPERATION_PORT, SOCKET_HOST)
+                    .onSuccess(r -> System.out.println("listen success"))
+                    .onFailure(Throwable::printStackTrace);
+
+            HttpServer serverSocketModality = getVertx().createHttpServer();
+            serverSocketModality.webSocketHandler(ctx -> {
+                        getVertx().eventBus().consumer("modality", body ->
+                                ctx.writeTextMessage(body.body().toString())
+                        );
+                    }).listen(SOCKET_MODALITY_PORT, SOCKET_HOST)
                     .onSuccess(r -> System.out.println("listen success"))
                     .onFailure(Throwable::printStackTrace);
 

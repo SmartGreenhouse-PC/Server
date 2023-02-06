@@ -6,8 +6,7 @@ import com.mongodb.client.model.Filters;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Greenhouse;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.GreenhouseImpl;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Modality;
-import it.unibo.smartgh.greenhouse.entity.plant.Plant;
-import it.unibo.smartgh.greenhouse.entity.plant.PlantBuilder;
+import it.unibo.smartgh.greenhouse.entity.plant.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -60,25 +59,19 @@ public class GreenhouseDatabaseImpl implements GreenhouseDatabase{
         Document doc = documents.iterator().next();
         List list = new ArrayList<>(doc.values());
         Document plantDoc = (Document) list.get(1);
-        Document respUnit = (Document) plantDoc.get("unit");
-        Map<String, String> unit = new HashMap<>(){{
-            put("temperature", respUnit.getString("temperature"));
-            put("humidity", respUnit.getString("humidity"));
-            put("soilMoisture", respUnit.getString("soilMoisture"));
-            put("brightness", respUnit.getString("brightness"));
-        }};
+        Map<ParameterType, Parameter> parameters = new HashMap<>();
+        ((Collection<Document>) plantDoc.get("parameters")).forEach(d -> {
+            parameters.put( ParameterType.parameterOf(d.getString("name")).get(),
+                    new ParameterBuilder(d.getString("name"))
+                    .min(valueOf(d.get("min").toString()))
+                    .max(valueOf(d.get("max").toString()))
+                    .unit(d.getString("unit"))
+                    .build());
+        });
         Plant plant = new PlantBuilder(plantDoc.get("name", String.class))
                 .description(plantDoc.get("description", String.class))
                 .image(plantDoc.get("img", String.class))
-                .units(unit)
-                .minTemperature(valueOf(plantDoc.get("minTemperature").toString()))
-                .maxTemperature(valueOf(plantDoc.get("maxTemperature").toString()))
-                .minBrightness(valueOf(plantDoc.get("minBrightness").toString()))
-                .maxBrightness(valueOf(plantDoc.get("maxBrightness").toString()))
-                .minSoilMoisture(valueOf(plantDoc.get("minSoilMoisture").toString()))
-                .maxSoilMoisture(valueOf(plantDoc.get("maxSoilMoisture").toString()))
-                .minHumidity(valueOf(plantDoc.get("minHumidity").toString()))
-                .maxHumidity(valueOf(plantDoc.get("maxHumidity").toString()))
+                .parameters(parameters)
                 .build();
         Modality modality = Modality.valueOf(doc.get("modality", String.class).toUpperCase());
         return new GreenhouseImpl(id, plant, modality);

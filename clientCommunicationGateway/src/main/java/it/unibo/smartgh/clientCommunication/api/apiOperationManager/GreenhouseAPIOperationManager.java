@@ -23,12 +23,14 @@ public class GreenhouseAPIOperationManager {
     private static String GREENHOUSE_SERVICE_HOST;
     private static int GREENHOUSE_SERVICE_PORT;
     private final WebClient httpClient;
+    private final Vertx vertx;
 
     /**
      * Public constructor of the class.
      * @param vertx the program's instance of Vertx.
      */
     public GreenhouseAPIOperationManager(Vertx vertx) {
+        this.vertx = vertx;
         try {
             InputStream is = GreenhouseAPIOperationManager.class.getResourceAsStream("/config.properties");
             Properties properties = new Properties();
@@ -70,6 +72,18 @@ public class GreenhouseAPIOperationManager {
                 .sendJsonObject(newGreenhouseModality)
                 .onSuccess(p::complete)
                 .onFailure(p::fail);
+        return p.future();
+    }
+
+    /**
+     * Notify a new operation performed by the user.
+     * @param modalityInformation the information of the modality changed.
+     * @return a {@link Future} representing the operation required.
+     */
+    public Future<Void> postNotifyChangeModality(JsonObject modalityInformation) {
+        Promise<Void> p = Promise.promise();
+        vertx.eventBus().publish("modality", modalityInformation.toString());
+        p.complete();
         return p.future();
     }
 }

@@ -18,4 +18,10 @@ public interface GreenhousePathManager{
      * @param request the routing context of reference.
      */
     void handlePostGreenhouseModality(RoutingContext request);
+
+    /**
+     * Handles the greenhouse notify modality request.
+     * @param request the routing context of reference.
+     */
+    void handlePostNotifyGreenhouseModality(RoutingContext request);
 }

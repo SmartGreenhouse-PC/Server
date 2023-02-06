@@ -15,8 +15,7 @@ import it.unibo.smartgh.greenhouse.controller.GreenhouseControllerImpl;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Greenhouse;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.GreenhouseImpl;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Modality;
-import it.unibo.smartgh.greenhouse.entity.plant.Plant;
-import it.unibo.smartgh.greenhouse.entity.plant.PlantBuilder;
+import it.unibo.smartgh.greenhouse.entity.plant.*;
 import it.unibo.smartgh.greenhouse.persistence.GreenhouseDatabaseImpl;
 import it.unibo.smartgh.greenhouse.presentation.GsonUtils;
 import it.unibo.smartgh.greenhouse.service.GreenhouseService;
@@ -44,26 +43,34 @@ public class GreenhouseClientCommunicationHTTPAdapterTest {
     private static String GREENHOUSE_HOST;
 
     private static final String GREENHOUSE_ID =  "63af0ae025d55e9840cbc1fa";
-
-    private static final Map<String,String> units = new HashMap<>(){{
-        put("temperature", new String("° C".getBytes(), StandardCharsets.UTF_8));
-        put("humidity", "%");
-        put("soilMoisture", "%");
-        put("brightness", "Lux");
+    private final Map<ParameterType, Parameter> parameters = new HashMap<>(){{
+        put(ParameterType.TEMPERATURE, new ParameterBuilder("temperature")
+                .min(8.0)
+                .max(35.0)
+                .unit("\u2103")
+                .build());
+        put(ParameterType.BRIGHTNESS, new ParameterBuilder("brightness")
+                .min(4200.0)
+                .max(130000.0)
+                .unit("Lux")
+                .build());
+        put(ParameterType.SOIL_MOISTURE, new ParameterBuilder("soilMoisture")
+                .min(20.0)
+                .max(65.0)
+                .unit("%")
+                .build());
+        put(ParameterType.HUMIDITY, new ParameterBuilder("humidity")
+                .min(30.0)
+                .max(80.0)
+                .unit("%")
+                .build());
     }};
+
     private final Plant plant = new PlantBuilder("lemon")
             .description("is a species of small evergreen trees in the flowering plant family " +
                     "Rutaceae, native to Asia, primarily Northeast India (Assam), Northern Myanmar or China.")
             .image("http://www.burkesbackyard.com.au/wp-content/uploads/2014/01/945001_399422270172619_1279327806_n.jpg")
-            .units(units)
-            .minTemperature(8.0)
-            .maxTemperature(35.0)
-            .minBrightness(4200.0)
-            .maxBrightness(130000.0)
-            .minSoilMoisture(20.0)
-            .maxSoilMoisture(65.0)
-            .minHumidity(30.0)
-            .maxHumidity(80.0)
+            .parameters(parameters)
             .build();
 
     private final Greenhouse greenhouse = new GreenhouseImpl(GREENHOUSE_ID, plant, Modality.MANUAL);
@@ -112,7 +119,8 @@ public class GreenhouseClientCommunicationHTTPAdapterTest {
                         operationPath)
                 .addQueryParam("id", GREENHOUSE_ID)
                 .send(testContext.succeeding(response -> testContext.verify(() -> {
-                    assertEquals(greenhouse, gson.fromJson(response.body().toString(), GreenhouseImpl.class));
+                    Greenhouse resp = gson.fromJson(response.body().toString(), GreenhouseImpl.class);
+                    assertEquals(greenhouse, resp);
                     testContext.completeNow();
                 })));
     }

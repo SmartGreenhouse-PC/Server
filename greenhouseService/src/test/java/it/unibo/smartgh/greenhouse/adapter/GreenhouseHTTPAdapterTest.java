@@ -15,6 +15,7 @@ import it.unibo.smartgh.brightness.service.BrightnessService;
 import it.unibo.smartgh.clientCommunication.api.ClientCommunicationAPI;
 import it.unibo.smartgh.clientCommunication.api.ClientCommunicationModel;
 import it.unibo.smartgh.clientCommunication.service.ClientCommunicationService;
+import it.unibo.smartgh.greenhouse.entity.plant.*;
 import it.unibo.smartgh.greenhouse.service.GreenhouseService;
 import it.unibo.smartgh.greenhouse.api.GreenhouseAPI;
 import it.unibo.smartgh.greenhouse.api.GreenhouseModel;
@@ -22,8 +23,6 @@ import it.unibo.smartgh.greenhouse.controller.GreenhouseControllerImpl;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Greenhouse;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.GreenhouseImpl;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Modality;
-import it.unibo.smartgh.greenhouse.entity.plant.Plant;
-import it.unibo.smartgh.greenhouse.entity.plant.PlantBuilder;
 import it.unibo.smartgh.greenhouse.persistence.GreenhouseDatabaseImpl;
 import it.unibo.smartgh.greenhouse.presentation.GsonUtils;
 import it.unibo.smartgh.humidity.service.HumidityService;
@@ -66,25 +65,33 @@ public class GreenhouseHTTPAdapterTest {
     private static String CLIENT_COMMUNICATION_HOST;
     private static int CLIENT_COMMUNICATION_PORT;
     private static final Map<String, Map<String, String>> PARAMETERS = new HashMap<>();
-    private final Map<String,String> units = new HashMap<>(){{
-        put("temperature", new String("° C".getBytes(), StandardCharsets.UTF_8));
-        put("humidity", "%");
-        put("soilMoisture", "%");
-        put("brightness", "Lux");
+    private final Map<ParameterType, Parameter> parameters = new HashMap<>(){{
+        put(ParameterType.TEMPERATURE, new ParameterBuilder("temperature")
+                .min(8.0)
+                .max(35.0)
+                .unit("\u2103")
+                .build());
+        put(ParameterType.BRIGHTNESS, new ParameterBuilder("brightness")
+                .min(4200.0)
+                .max(130000.0)
+                .unit("Lux")
+                .build());
+        put(ParameterType.SOIL_MOISTURE, new ParameterBuilder("soilMoisture")
+                .min(20.0)
+                .max(65.0)
+                .unit("%")
+                .build());
+        put(ParameterType.HUMIDITY, new ParameterBuilder("humidity")
+                .min(30.0)
+                .max(80.0)
+                .unit("%")
+                .build());
     }};
     private final Plant plant = new PlantBuilder("lemon AUTOMATIC")
                 .description("is a species of small evergreen trees in the flowering plant family " +
                                      "Rutaceae, native to Asia, primarily Northeast India (Assam), Northern Myanmar or China.")
                 .image("http://www.burkesbackyard.com.au/wp-content/uploads/2014/01/945001_399422270172619_1279327806_n.jpg")
-                .minTemperature(8.0)
-                .maxTemperature(35.0)
-                .minBrightness(4200.0)
-                .maxBrightness(130000.0)
-                .minSoilMoisture(20.0)
-                .maxSoilMoisture(65.0)
-                .minHumidity(30.0)
-                .maxHumidity(80.0)
-                .units(units)
+                .parameters(parameters)
                 .build();
 
     private final Greenhouse greenhouse = new GreenhouseImpl(ID_AUTOMATIC, plant, Modality.AUTOMATIC);
@@ -173,7 +180,6 @@ public class GreenhouseHTTPAdapterTest {
                 .addQueryParam("id", ID_AUTOMATIC)
                 .as(BodyCodec.string())
                 .send(testContext.succeeding(response -> testContext.verify(() -> {
-                    System.out.println(response.body());
                     assertEquals(gson.toJson(greenhouse), response.body());
                     testContext.completeNow();
                 })));

@@ -1,8 +1,11 @@
 package it.unibo.smartgh.greenhouse.presentation;
 
+
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Greenhouse;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Modality;
+import it.unibo.smartgh.greenhouse.entity.plant.ParameterType;
 import it.unibo.smartgh.greenhouse.entity.plant.Plant;
 
 import java.lang.reflect.InvocationTargetException;
@@ -32,21 +35,23 @@ public class ToJSON {
      */
     private static JsonObject plantToJSON(Plant p) {
         JsonObject plant = new JsonObject();
-        JsonObject unit = new JsonObject();
-        p.getUnitMap().forEach(unit::put);
+        JsonArray parameters = paramsToJsonObject(p);
         plant.put("name", p.getName());
         plant.put("description", p.getDescription());
-        plant.put("img", p.getImg());
-        plant.put("minTemperature", p.getMinTemperature());
-        plant.put("maxTemperature", p.getMaxTemperature());
-        plant.put("minBrightness", p.getMinBrightness());
-        plant.put("maxBrightness", p.getMaxBrightness());
-        plant.put("minSoilMoisture", p.getMinSoilMoisture());
-        plant.put("maxSoilMoisture", p.getMaxSoilMoisture());
-        plant.put("minHumidity", p.getMinHumidity());
-        plant.put("maxHumidity", p.getMaxHumidity());
-        plant.put("unit", unit);
+        plant.put("parameters", parameters);
         return plant;
+    }
+
+    private static JsonArray paramsToJsonObject(Plant plant) {
+        JsonArray jsonArray = new JsonArray();
+        plant.getParameters().forEach((t,p) -> {
+            jsonArray.add(new JsonObject()
+                    .put("name", p.getName())
+                    .put("min", p.getMin().toString())
+                    .put("max", p.getMax().toString())
+                    .put("unit", p.getUnit()));
+        });
+        return jsonArray;
     }
 
     /**
@@ -69,16 +74,8 @@ public class ToJSON {
     public static JsonObject paramToJSON(Plant plant, String param){
         JsonObject parameter = new JsonObject();
         String original = param.toLowerCase();
-        String paramName = original.substring(0, 1).toUpperCase() + original.substring(1);
-        try {
-            Class<?> c = Class.forName(Plant.class.getName());
-            Method minMethod = c.getDeclaredMethod("getMin"+paramName);
-            Method maxMethod = c.getDeclaredMethod("getMax"+paramName);
-            parameter.put("min"+paramName, minMethod.invoke(plant));
-            parameter.put("max"+paramName, maxMethod.invoke(plant));
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        parameter.put("min", plant.getParameters().get(ParameterType.parameterOf(original).get()).getMin());
+        parameter.put("max", plant.getParameters().get(ParameterType.parameterOf(original).get()).getMax());
         return parameter;
     }
 }

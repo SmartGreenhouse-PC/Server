@@ -1,7 +1,3 @@
-plugins {
-    java
-}
-
 group = "it.unibo.smartgh"
 version = "0.1.0"
 
@@ -22,3 +18,5 @@ tasks.withType<Jar> {
         attributes["Main-Class"] = "it.unibo.smartgh.temperature.TemperatureServiceLauncher"
     }
 }
+
+

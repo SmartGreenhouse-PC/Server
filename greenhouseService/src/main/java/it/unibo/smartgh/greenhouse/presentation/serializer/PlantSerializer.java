@@ -1,11 +1,7 @@
 package it.unibo.smartgh.greenhouse.presentation.serializer;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import it.unibo.smartgh.greenhouse.entity.plant.Plant;
-import it.unibo.smartgh.greenhouse.entity.plant.PlantImpl;
+import com.google.gson.*;
+import it.unibo.smartgh.greenhouse.entity.plant.*;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -21,25 +17,11 @@ public class PlantSerializer implements JsonSerializer<PlantImpl> {
         json.addProperty("name", src.getName());
         json.addProperty("description", src.getDescription());
         json.addProperty("img", src.getImg());
-        json.addProperty("minTemperature", src.getMinTemperature());
-        json.addProperty("maxTemperature", src.getMaxTemperature());
-        json.addProperty("minBrightness", src.getMinBrightness());
-        json.addProperty("maxBrightness", src.getMaxBrightness());
-        json.addProperty("minSoilMoisture", src.getMinSoilMoisture());
-        json.addProperty("maxSoilMoisture", src.getMaxSoilMoisture());
-        json.addProperty("minHumidity", src.getMinHumidity());
-        json.addProperty("maxHumidity", src.getMaxHumidity());
-        json.add("unit", this.convertUnitsInJsonElement(src.getUnitMap()));
+        JsonArray jsonArray = new JsonArray();
+        src.getParameters().forEach((k,v) -> {
+            jsonArray.add(context.serialize(v, ParameterImpl.class));
+        });
+        json.add("parameters", jsonArray);
         return json;
-    }
-
-    private JsonElement convertUnitsInJsonElement(Map<String, String> unitMap) {
-        JsonObject json = new JsonObject();
-        json.addProperty("temperature", unitMap.get("temperature"));
-        json.addProperty("humidity", unitMap.get("humidity"));
-        json.addProperty("soilMoisture", unitMap.get("soilMoisture"));
-        json.addProperty("brightness", unitMap.get("brightness"));
-
-        return  json;
     }
 }

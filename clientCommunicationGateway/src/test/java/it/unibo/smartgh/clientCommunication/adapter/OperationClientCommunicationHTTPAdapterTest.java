@@ -195,7 +195,8 @@ public class OperationClientCommunicationHTTPAdapterTest {
     @Test
     public void testPostNotifyNewOperation(Vertx vertx, VertxTestContext testContext){
         JsonObject expectedJson = new JsonObject()
-                .put("greenhouseId", "63af0ae025d55e9840cbc1fa");
+                .put("greenhouseId", "63af0ae025d55e9840cbc1fa")
+                .put("parameterName", "temperature");
 
         HttpClient socketClient = vertx.createHttpClient();
         socketClient.webSocket(SOCKET_PORT,

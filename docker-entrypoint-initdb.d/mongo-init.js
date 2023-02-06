@@ -9,20 +9,28 @@ db.greenhouse.insertMany( [
     name: 'Peperoncino rosso calabrese',
     description: 'È un arbusto a portamento eretto, ha foglie lanceolate, verdi. Può essere presente una peluria su fusto e pagina superiore delle foglie. I fiori, bianchi, singoli, con stami giallo/verdi, a 5-7 petali, compaiono all\'ascella delle foglie, uno per nodo, in estate.',
     img: 'http://www.peperoncinodicalabria.it/wp-content/uploads/2015/08/naso-di-cane-peperoncino-calabrese.jpg',
-    minTemperature: 10.0,
-    maxTemperature: 35.0,
-    minBrightness: 3000.0,
-    maxBrightness: 95000.0,
-    minSoilMoisture: 20.0,
-    maxSoilMoisture: 65.0,
-    minHumidity: 30.0,
-    maxHumidity: 80.0,
-    unit: {
-      temperature: '° C',
-      humidity:'%',
-      soilMoisture: '%',
-      brightness: 'Lux'
-    }
+    parameters: [
+        { name: 'temperature',
+          min: 10.0,
+          max: 35.0,
+          unit: '℃'
+        },
+        { name: 'brightness',
+          min: 3000.0,
+          max: 95000.0,
+          unit: 'Lux'
+        },
+        { name: 'soilMoisture',
+          min: 20.0,
+          max: 65.0,
+          unit: '%'
+        },
+        { name: 'humidity',
+          min: 30.0,
+          max: 80.0,
+          unit: '%'
+        }
+    ]
   },
   modality: 'AUTOMATIC'
 },
@@ -32,20 +40,28 @@ db.greenhouse.insertMany( [
     name: 'lemon',
     description: 'is a species of small evergreen trees in the flowering plant family Rutaceae, native to Asia, primarily Northeast India (Assam), Northern Myanmar or China.',
     img: 'http://www.burkesbackyard.com.au/wp-content/uploads/2014/01/945001_399422270172619_1279327806_n.jpg',
-    minTemperature: 8.0,
-    maxTemperature: 35.0,
-    minBrightness: 4200.0,
-    maxBrightness: 130000.0,
-    minSoilMoisture: 20.0,
-    maxSoilMoisture: 65.0,
-    minHumidity: 30.0,
-    maxHumidity: 80.0,
-    unit: {
-        temperature: '° C',
-        humidity:'%',
-        soilMoisture: '%',
-        brightness: 'Lux'
-    }
+    parameters: [
+            { name: 'temperature',
+              min: 8.0,
+              max: 35.0,
+              unit: '℃'
+            },
+            { name: 'brightness',
+              min: 4200.0,
+              max: 130000.0,
+              unit: 'Lux'
+            },
+            { name: 'soilMoisture',
+              min: 20.0,
+              max: 65.0,
+              unit: '%'
+            },
+            { name: 'humidity',
+              min: 30.0,
+              max: 80.0,
+              unit: '%'
+            }
+        ]
   },
   modality: 'AUTOMATIC'
 },
@@ -55,20 +71,28 @@ db.greenhouse.insertMany( [
     name: 'lemon AUTOMATIC',
     description: 'is a species of small evergreen trees in the flowering plant family Rutaceae, native to Asia, primarily Northeast India (Assam), Northern Myanmar or China.',
     img: 'http://www.burkesbackyard.com.au/wp-content/uploads/2014/01/945001_399422270172619_1279327806_n.jpg',
-    minTemperature: 8.0,
-    maxTemperature: 35.0,
-    minBrightness: 4200.0,
-    maxBrightness: 130000.0,
-    minSoilMoisture: 20.0,
-    maxSoilMoisture: 65.0,
-    minHumidity: 30.0,
-    maxHumidity: 80.0,
-    unit: {
-        temperature: '° C',
-        humidity:'%',
-        soilMoisture: '%',
-        brightness: 'Lux'
-    }
+    parameters: [
+            { name: 'temperature',
+              min: 8.0,
+              max: 35.0,
+              unit: '℃'
+            },
+            { name: 'brightness',
+              min: 4200.0,
+              max: 130000.0,
+              unit: 'Lux'
+            },
+            { name: 'soilMoisture',
+              min: 20.0,
+              max: 65.0,
+              unit: '%'
+            },
+            { name: 'humidity',
+              min: 30.0,
+              max: 80.0,
+              unit: '%'
+            }
+        ]
   },
   modality: 'AUTOMATIC'
 }

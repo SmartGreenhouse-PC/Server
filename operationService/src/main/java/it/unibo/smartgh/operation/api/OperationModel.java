@@ -106,7 +106,10 @@ public class OperationModel implements OperationAPI {
                 .onSuccess(h -> {
                     System.out.println(operation.getParameter());
                     client.post(CLIENT_SERVICE_PORT, CLIENT_SERVICE_HOST, CLIENT_BASE_PATH)
-                            .sendJsonObject(new JsonObject().put("greenhouseId", operation.getGreenhouseId()))
+                            .sendJsonObject(new JsonObject()
+                                    .put("greenhouseId", operation.getGreenhouseId())
+                                    .put("parameterName", operation.getParameter())
+                            )
                             .onSuccess(h2 -> promise.complete())
                             .onFailure(promise::fail);
                 })

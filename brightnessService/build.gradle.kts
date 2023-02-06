@@ -1,7 +1,3 @@
-plugins {
-    java
-}
-
 group = "it.unibo.smartgh"
 version = "0.1.0"
 
@@ -13,6 +9,7 @@ dependencies{
     implementation(project(":common"))
 }
 
+
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
 }
@@ -23,3 +20,7 @@ tasks.withType<Jar> {
         attributes["Main-Class"] = "it.unibo.smartgh.brightness.BrightnessServiceLauncher"
     }
 }
+
+
+
+

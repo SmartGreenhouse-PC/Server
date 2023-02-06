@@ -8,16 +8,8 @@ import java.util.Map;
 public final class PlantBuilder {
     private final String name;
     private String description;
-    private Double minTemperature;
-    private Double maxTemperature;
-    private Double minBrightness;
-    private Double maxBrightness;
-    private Double minSoilMoisture;
-    private Double maxSoilMoisture;
-    private Double minHumidity;
-    private Double maxHumidity;
     private String img;
-    private Map<String, String> units;
+    private Map<ParameterType, Parameter> parameters;
 
     /**
      * Constructor for the plant entity.
@@ -48,92 +40,12 @@ public final class PlantBuilder {
     }
 
     /**
-     * Add the minimum temperature to plant entity.
-     * @param val of the plant.
-     * @return the plant builder.
-     */
-    public PlantBuilder minTemperature(Double val) {
-        this.minTemperature = val;
-        return this;
-    }
-
-    /**
-     * Add the maximum temperature to plant entity.
-     * @param val of the plant.
-     * @return the plant builder.
-     */
-    public PlantBuilder maxTemperature(Double val) {
-        this.maxTemperature = val;
-        return this;
-    }
-
-    /**
-     * Add the minimum brightness to plant entity.
-     * @param val of the plant.
-     * @return the plant builder.
-     */
-    public PlantBuilder minBrightness(Double val) {
-        this.minBrightness = val;
-        return this;
-    }
-
-    /**
-     * Add the maximum brightness to plant entity.
-     * @param val of the plant.
-     * @return the plant builder.
-     */
-    public PlantBuilder maxBrightness(Double val) {
-        this.maxBrightness = val;
-        return this;
-    }
-
-    /**
-     * Add the minimum soil moisture to plant entity.
-     * @param val of the plant.
-     * @return the plant builder.
-     */
-    public PlantBuilder minSoilMoisture(Double val) {
-        this.minSoilMoisture = val;
-        return this;
-    }
-
-    /**
-     * Add the maximum soil moisture to plant entity.
-     * @param val of the plant.
-     * @return the plant builder.
-     */
-    public PlantBuilder maxSoilMoisture(Double val) {
-        this.maxSoilMoisture = val;
-        return this;
-    }
-
-    /**
-     * Add the minimum humidity to plant entity.
-     * @param val of the plant.
-     * @return the plant builder.
-     */
-    public PlantBuilder minHumidity(Double val) {
-        this.minHumidity = val;
-        return this;
-    }
-
-    /**
-     * Add the maximum humidity to plant entity.
-     * @param val of the plant.
-     * @return the plant builder.
-     */
-    public PlantBuilder maxHumidity(Double val) {
-        this.maxHumidity = val;
-        return this;
-    }
-
-    /**
      * Add units map.
-     * @param units of parameters.
+     * @param parameters of parameters.
      * @return the plant builder.
      */
-    public PlantBuilder units(Map<String, String> units) {
-        this.units = units;
+    public PlantBuilder parameters(Map<ParameterType, Parameter> parameters) {
+        this.parameters = parameters;
         return this;
     }
 
@@ -146,15 +58,7 @@ public final class PlantBuilder {
         return new PlantImpl(this.name,
                 this.description,
                 this.img,
-                this.minTemperature,
-                this.maxTemperature,
-                this.minBrightness,
-                this.maxBrightness,
-                this.minSoilMoisture,
-                this.maxSoilMoisture,
-                this.minHumidity,
-                this.maxHumidity,
-                this.units
+                this.parameters
                 );
     }
 

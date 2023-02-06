@@ -1,27 +1,75 @@
 [{
   "_id": {
+    "$oid": "63af0ae025d55e9840cbc1fc"
+  },
+  "plant": {
+    "name": "Peperoncino rosso calabrese",
+    "description": "È un arbusto a portamento eretto, ha foglie lanceolate, verdi. Può essere presente una peluria su fusto e pagina superiore delle foglie. I fiori, bianchi, singoli, con stami giallo/verdi, a 5-7 petali, compaiono all\\'ascella delle foglie, uno per nodo, in estate.",
+    "img": "http://www.peperoncinodicalabria.it/wp-content/uploads/2015/08/naso-di-cane-peperoncino-calabrese.jpg",
+    "parameters": [
+      {
+        "name": "temperature",
+        "min": 10,
+        "max": 35,
+        "unit": "℃"
+      },
+      {
+        "name": "brightness",
+        "min": 3000,
+        "max": 95000,
+        "unit": "Lux"
+      },
+      {
+        "name": "soilMoisture",
+        "min": 20,
+        "max": 65,
+        "unit": "%"
+      },
+      {
+        "name": "humidity",
+        "min": 30,
+        "max": 80,
+        "unit": "%"
+      }
+    ]
+  },
+  "modality": "AUTOMATIC"
+},{
+  "_id": {
     "$oid": "63af0ae025d55e9840cbc1fa"
   },
   "plant": {
     "name": "lemon",
     "description": "is a species of small evergreen trees in the flowering plant family Rutaceae, native to Asia, primarily Northeast India (Assam), Northern Myanmar or China.",
     "img": "http://www.burkesbackyard.com.au/wp-content/uploads/2014/01/945001_399422270172619_1279327806_n.jpg",
-    "minTemperature": 8,
-    "maxTemperature": 35,
-    "minBrightness": 4200,
-    "maxBrightness": 130000,
-    "minSoilMoisture": 20,
-    "maxSoilMoisture": 65,
-    "minHumidity": 30,
-    "maxHumidity": 80,
-    "unit": {
-      "temperature": "° C",
-      "humidity": "%",
-      "soilMoisture": "%",
-      "brightness": "Lux"
-    }
+    "parameters": [
+      {
+        "name": "temperature",
+        "min": 8,
+        "max": 35,
+        "unit": "℃"
+      },
+      {
+        "name": "brightness",
+        "min": 4200,
+        "max": 130000,
+        "unit": "Lux"
+      },
+      {
+        "name": "soilMoisture",
+        "min": 20,
+        "max": 65,
+        "unit": "%"
+      },
+      {
+        "name": "humidity",
+        "min": 30,
+        "max": 80,
+        "unit": "%"
+      }
+    ]
   },
-  "modality": "AUTOMATIC"
+  "modality": "MANUAL"
 },{
   "_id": {
     "$oid": "63b29b0a3792e15bae3229a7"
@@ -30,44 +78,32 @@
     "name": "lemon AUTOMATIC",
     "description": "is a species of small evergreen trees in the flowering plant family Rutaceae, native to Asia, primarily Northeast India (Assam), Northern Myanmar or China.",
     "img": "http://www.burkesbackyard.com.au/wp-content/uploads/2014/01/945001_399422270172619_1279327806_n.jpg",
-    "minTemperature": 8,
-    "maxTemperature": 35,
-    "minBrightness": 4200,
-    "maxBrightness": 130000,
-    "minSoilMoisture": 20,
-    "maxSoilMoisture": 65,
-    "minHumidity": 30,
-    "maxHumidity": 80,
-    "unit": {
-      "temperature": "° C",
-      "humidity": "%",
-      "soilMoisture": "%",
-      "brightness": "Lux"
-    }
-  },
-  "modality": "AUTOMATIC"
-},{
-  "_id": {
-    "$oid": "63af0ae025d55e9840cbc1fc"
-  },
-  "plant": {
-    "name": "Peperoncino rosso calabrese",
-    "description": "È un arbusto a portamento eretto, ha foglie lanceolate, verdi. Può essere presente una peluria su fusto e pagina superiore delle foglie. I fiori, bianchi, singoli, con stami giallo/verdi, a 5-7 petali, compaiono all'ascella delle foglie, uno per nodo, in estate.",
-    "img": "http://www.peperoncinodicalabria.it/wp-content/uploads/2015/08/naso-di-cane-peperoncino-calabrese.jpg",
-    "minTemperature": 10,
-    "maxTemperature": 35,
-    "minBrightness": 3000,
-    "maxBrightness": 95000,
-    "minSoilMoisture": 20,
-    "maxSoilMoisture": 65,
-    "minHumidity": 30,
-    "maxHumidity": 80,
-    "unit": {
-      "temperature": "° C",
-      "humidity": "%",
-      "soilMoisture": "%",
-      "brightness": "Lux"
-    }
+    "parameters": [
+      {
+        "name": "temperature",
+        "min": 8,
+        "max": 35,
+        "unit": "℃"
+      },
+      {
+        "name": "brightness",
+        "min": 4200,
+        "max": 130000,
+        "unit": "Lux"
+      },
+      {
+        "name": "soilMoisture",
+        "min": 20,
+        "max": 65,
+        "unit": "%"
+      },
+      {
+        "name": "humidity",
+        "min": 30,
+        "max": 80,
+        "unit": "%"
+      }
+    ]
   },
   "modality": "AUTOMATIC"
 }]

@@ -24,22 +24,4 @@ public interface PlantValue {
      * @return the plant value.
      */
     Double getValue();
-
-    /**
-     * Set the greenhouse id.
-     * @param greenhouseId the greenhouse id.
-     */
-    void setGreenhouseId(String greenhouseId);
-
-    /**
-     * Set the plant value date.
-     * @param date when the value is sensed.
-     */
-    void setDate(Date date);
-
-    /**
-     * Set the value sensed.
-     * @param value sensed.
-     */
-    void setValue(Double value);
 }

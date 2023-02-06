@@ -44,22 +44,6 @@ public class PlantValueImpl implements PlantValue {
         return value;
     }
 
-    
-    @Override
-    public void setGreenhouseId(String greenhouseId){
-        this.greenhouseId = greenhouseId;
-    }
-
-    @Override
-    public void setDate(Date date){
-        this.date = date;
-    }
-
-    @Override
-    public void setValue(Double value){
-        this.value = value;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

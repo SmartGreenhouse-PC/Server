@@ -98,4 +98,11 @@ public interface ClientCommunicationAPI {
      * @return a {@link io.vertx.core.Future} representing the operation performed.
      */
     Future<Void> postNewOperation(JsonObject operation);
+
+    /**
+     * Notify clients of a change of modality.
+     * @param modalityInformation about the new modality.
+     * @return a {@link io.vertx.core.Future} representing the operation performed.
+     */
+    Future<Void> postNotifyChangeModality(JsonObject modalityInformation);
 }
