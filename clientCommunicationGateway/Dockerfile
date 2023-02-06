@@ -1,4 +1,4 @@
-FROM openjdk:11 AS client_communication_gateway
+FROM openjdk:17.0.2 AS client_communication_gateway
 WORKDIR /
 ADD build/libs/clientCommunicationGateway-0.1.0-all.jar clientCommunicationGateway-0.1.0-all.jar
 CMD java -jar clientCommunicationGateway-0.1.0-all.jar
