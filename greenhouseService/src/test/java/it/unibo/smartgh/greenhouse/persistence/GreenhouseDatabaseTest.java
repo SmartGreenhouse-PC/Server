@@ -16,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class GreenhouseDatabaseTest {
     private static final GreenhouseDatabase greenhouseDatabase = new GreenhouseDatabaseImpl();
-    private static final String ID = "63af0ae025d55e9840cbc1fa";
-    private static final String ID_AUTOMATIC =  "63b29b0a3792e15bae3229a7";
+    private static final String ID = "greenhouse2";
+    private static final String ID_AUTOMATIC =  "greenhouse3";
 
     @Test
     public void testGetGreenhouse() {

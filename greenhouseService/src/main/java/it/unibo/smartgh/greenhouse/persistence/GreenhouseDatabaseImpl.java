@@ -46,7 +46,7 @@ public class GreenhouseDatabaseImpl implements GreenhouseDatabase{
         this.getGreenhouse(id); //used for check the id
         MongoCollection<Document> collection = connection();
         collection.updateOne(
-                new BasicDBObject("_id", new ObjectId(id)),
+                new BasicDBObject("id", id),
                 new BasicDBObject("$set", new BasicDBObject("modality", modality.name()))
         );
     }
@@ -54,11 +54,10 @@ public class GreenhouseDatabaseImpl implements GreenhouseDatabase{
     @Override
     public Greenhouse getGreenhouse(String id) {
         MongoCollection<Document> collection = connection();
-        Bson filter = Filters.eq("_id", new ObjectId(id));
-        FindIterable<Document> documents = collection.find(filter);
+        FindIterable<Document> documents = collection.find(new Document("id", id));
         Document doc = documents.iterator().next();
         List list = new ArrayList<>(doc.values());
-        Document plantDoc = (Document) list.get(1);
+        Document plantDoc = (Document) list.get(2);
         Map<ParameterType, Parameter> parameters = new HashMap<>();
         ((Collection<Document>) plantDoc.get("parameters")).forEach(d -> {
             parameters.put( ParameterType.parameterOf(d.getString("name")).get(),

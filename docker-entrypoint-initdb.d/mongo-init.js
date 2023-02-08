@@ -5,6 +5,7 @@ db.createCollection('greenhouse');
 db.greenhouse.insertMany( [
 {
   _id: ObjectId('63af0ae025d55e9840cbc1fc'),
+  id: "greenhouse1",
   plant: {
     name: 'Peperoncino rosso calabrese',
     description: 'È un arbusto a portamento eretto, ha foglie lanceolate, verdi. Può essere presente una peluria su fusto e pagina superiore delle foglie. I fiori, bianchi, singoli, con stami giallo/verdi, a 5-7 petali, compaiono all\'ascella delle foglie, uno per nodo, in estate.',
@@ -36,6 +37,7 @@ db.greenhouse.insertMany( [
 },
 {
   _id: ObjectId('63af0ae025d55e9840cbc1fa'),
+  id: "greenhouse2",
   plant: {
     name: 'lemon',
     description: 'is a species of small evergreen trees in the flowering plant family Rutaceae, native to Asia, primarily Northeast India (Assam), Northern Myanmar or China.',
@@ -67,6 +69,7 @@ db.greenhouse.insertMany( [
 },
 {
   _id: ObjectId('63b29b0a3792e15bae3229a7'),
+  id: "greenhouse3",
   plant: {
     name: 'lemon AUTOMATIC',
     description: 'is a species of small evergreen trees in the flowering plant family Rutaceae, native to Asia, primarily Northeast India (Assam), Northern Myanmar or China.',

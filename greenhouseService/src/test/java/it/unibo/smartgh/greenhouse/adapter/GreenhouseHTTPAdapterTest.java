@@ -54,8 +54,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @ExtendWith(VertxExtension.class)
 public class GreenhouseHTTPAdapterTest {
-    private static final String ID = "63af0ae025d55e9840cbc1fa";
-    private static final String ID_AUTOMATIC =  "63b29b0a3792e15bae3229a7";
+    private static final String ID = "greenhouse2";
+    private static final String ID_AUTOMATIC =  "greenhouse3";
     private static String HOST;
     private static int PORT;
     private static String MONGODB_HOST;
