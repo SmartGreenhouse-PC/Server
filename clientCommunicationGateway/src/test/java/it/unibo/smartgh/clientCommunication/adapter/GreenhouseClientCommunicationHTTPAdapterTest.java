@@ -95,6 +95,7 @@ public class GreenhouseClientCommunicationHTTPAdapterTest {
     }
     private static void configVariable() {
         File file = new File(GreenhouseClientCommunicationHTTPAdapterTest.class.getClassLoader().getResource("config.properties").getFile());
+
         try {
             FileInputStream fin = new FileInputStream(file);
             Properties properties = new Properties();
