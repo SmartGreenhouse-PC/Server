@@ -94,7 +94,7 @@ public class GreenhouseModel implements GreenhouseAPI{
         Promise<Void> promise = Promise.promise();
         try {
             Greenhouse greenhouse = greenhouseController.getGreenhouse(id);
-            storeParameters(id, parameters);//.onFailure(e -> promise.fail("parameter post error")); TODO add comment
+            storeParameters(id, parameters);
             checkAlarm(greenhouse, parameters);
         } catch (NoSuchElementException ex) {
             promise.fail("No greenhouse");
@@ -107,29 +107,44 @@ public class GreenhouseModel implements GreenhouseAPI{
         Plant plant = greenhouse.getPlant();
         Map<ParameterType, Parameter> parametersMap = plant.getParameters();
 
-        checkTemperature(greenhouse,
-                parametersMap.get(ParameterType.TEMPERATURE).getMin(),
-                parametersMap.get(ParameterType.TEMPERATURE).getMax(),
-                valueOf(parameters.getValue("Temp").toString()),
-                greenhouse.getActualModality() == Modality.AUTOMATIC);
+        for (String p: parameters.fieldNames()) {
+            String path = "";
+            switch (p) {
+                case "Temp": {
+                    checkTemperature(greenhouse,
+                            parametersMap.get(ParameterType.TEMPERATURE).getMin(),
+                            parametersMap.get(ParameterType.TEMPERATURE).getMax(),
+                            valueOf(parameters.getValue("Temp").toString()),
+                            greenhouse.getActualModality() == Modality.AUTOMATIC);
+                    break;
+                }
+                case "Soil": {
+                    checkSoilMoisture(greenhouse,
+                            parametersMap.get(ParameterType.SOIL_MOISTURE).getMin(),
+                            parametersMap.get(ParameterType.SOIL_MOISTURE).getMax(),
+                            valueOf(parameters.getValue("Soil").toString()),
+                            greenhouse.getActualModality() == Modality.AUTOMATIC);
+                    break;
+                }
+                case "Bright": {
 
-        checkBrightness(greenhouse,
-                parametersMap.get(ParameterType.BRIGHTNESS).getMin(),
-                parametersMap.get(ParameterType.BRIGHTNESS).getMax(),
-                valueOf(parameters.getValue("Bright").toString()),
-                greenhouse.getActualModality() == Modality.AUTOMATIC);
-
-        checkSoilMoisture(greenhouse,
-                parametersMap.get(ParameterType.SOIL_MOISTURE).getMin(),
-                parametersMap.get(ParameterType.SOIL_MOISTURE).getMax(),
-                valueOf(parameters.getValue("Soil").toString()),
-                greenhouse.getActualModality() == Modality.AUTOMATIC);
-
-        checkHumidity(greenhouse,
-                parametersMap.get(ParameterType.HUMIDITY).getMin(),
-                parametersMap.get(ParameterType.HUMIDITY).getMax(),
-                valueOf(parameters.getValue("Hum").toString()),
-                greenhouse.getActualModality() == Modality.AUTOMATIC);
+                    checkBrightness(greenhouse,
+                            parametersMap.get(ParameterType.BRIGHTNESS).getMin(),
+                            parametersMap.get(ParameterType.BRIGHTNESS).getMax(),
+                            valueOf(parameters.getValue("Bright").toString()),
+                            greenhouse.getActualModality() == Modality.AUTOMATIC);
+                    break;
+                }
+                case "Hum": {
+                    checkHumidity(greenhouse,
+                            parametersMap.get(ParameterType.HUMIDITY).getMin(),
+                            parametersMap.get(ParameterType.HUMIDITY).getMax(),
+                            valueOf(parameters.getValue("Hum").toString()),
+                            greenhouse.getActualModality() == Modality.AUTOMATIC);
+                    break;
+                }
+            }
+        }
     }
 
     private void insertOperation (String ghId, String parameter, String action, String modality){
@@ -244,7 +259,6 @@ public class GreenhouseModel implements GreenhouseAPI{
         WebClient client = WebClient.create(vertx);
 
         Promise<Void> promise = Promise.promise();
-        List<Future> futures = new ArrayList<>();
         for (String p: parameters.fieldNames()) {
             String path = "";
             switch (p) {
@@ -268,17 +282,15 @@ public class GreenhouseModel implements GreenhouseAPI{
             String host = PARAMETERS.get(path).get("host");
             int port = Integer.parseInt(PARAMETERS.get(path).get("port"));
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
-            futures.add(client.post(port, host, "/"+ path)
+            client.post(port, host, "/"+ path)
                     .sendJsonObject(
                             new JsonObject()
                                     .put("greenhouseId", id)
                                     .put("value", parameters.getValue(p).toString())
-                                    .put("date", formatter.format(new Date()))));
+                                    .put("date", formatter.format(new Date())))
+                    .onSuccess(res -> promise.complete())
+                    .onFailure(ex -> promise.future());
         }
-
-        CompositeFuture.all(futures)
-                .onSuccess(res -> promise.complete())
-                .onFailure(ex -> promise.future());
         promise.future();
     }
 

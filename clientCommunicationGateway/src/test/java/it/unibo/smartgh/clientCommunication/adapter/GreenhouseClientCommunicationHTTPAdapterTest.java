@@ -42,7 +42,7 @@ public class GreenhouseClientCommunicationHTTPAdapterTest {
     private static int GREENHOUSE_PORT;
     private static String GREENHOUSE_HOST;
 
-    private static final String GREENHOUSE_ID =  "63af0ae025d55e9840cbc1fa";
+    private static final String GREENHOUSE_ID =  "greenhouse2";
     private final Map<ParameterType, Parameter> parameters = new HashMap<>(){{
         put(ParameterType.TEMPERATURE, new ParameterBuilder("temperature")
                 .min(8.0)

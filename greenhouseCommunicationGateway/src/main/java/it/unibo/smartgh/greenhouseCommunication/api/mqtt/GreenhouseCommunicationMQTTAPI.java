@@ -10,16 +10,11 @@ public interface GreenhouseCommunicationMQTTAPI {
 
     /**
      * Get the thing description.
-     * @return the json object representing the thing description.
-     */
-    Future<JsonObject> getThingDescription();
-
-    /**
-     * Set the thing id.
      * @param thingId the id of the device.
-     * @return the future representing the operation.
+     * @return the json object representing the thing description.
+     *
      */
-    Future<Void> setThingId(String thingId);
+    Future<JsonObject> getThingDescription(String thingId);
 
     /**
      * Forward the new data incoming from the greenhouse microcontroller.

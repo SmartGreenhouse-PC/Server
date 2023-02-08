@@ -10,6 +10,7 @@ import it.unibo.smartgh.greenhouseCommunication.GreenhouseCommunicationServiceLa
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -18,10 +19,8 @@ import java.util.Properties;
 public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunicationMQTTAPI{
 
     private static final String GREENHOUSE_PATH = "/greenhouse";
-    private JsonObject thingDescription;
     private final WebClient httpClient;
-
-    private String thingId;
+    private Map<String, JsonObject> thingDescriptions;
 
     /**
      * Constructor for the greenhouse communication mqtt model.
@@ -31,10 +30,10 @@ public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunication
         this.httpClient = WebClient.create(vertx);
     }
 
-    private void setupThingDescription(){
-        thingDescription = new JsonObject();
+    private JsonObject computeThingDescription(String thingId){
+        JsonObject thingDescription = new JsonObject();
         thingDescription.put("@context", "https://www.w3.org/2019/wot/td/v1");
-        thingDescription.put("id", this.thingId);
+        thingDescription.put("id", thingId);
         thingDescription.put("title", "GreenHouseAutomationSystem");
 
         /* security section */
@@ -92,19 +91,17 @@ public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunication
         dataType.put("Soil", "string");
         stateChanged.put("forms",  new JsonArray());
 
+        return thingDescription;
     }
 
     @Override
-    public Future<JsonObject> getThingDescription() {
+    public Future<JsonObject> getThingDescription(String thingId) {
         Promise<JsonObject> p = Promise.promise();
-        p.complete(thingDescription);
-        return p.future();
-    }
-
-    @Override
-    public Future<Void> setThingId(String thingId) {
-        Promise<Void> p = Promise.promise();
-        this.thingId = thingId;
+        if(this.thingDescriptions.containsKey(thingId)) {
+            p.complete(this.thingDescriptions.get(thingId));
+        }else {
+            p.fail("The id is invalid");
+        }
         return p.future();
     }
 
@@ -112,7 +109,11 @@ public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunication
     public Future<Void> forwardNewGreenhouseData(JsonObject newGreenhouseData) {
         Promise<Void> p = Promise.promise();
         JsonObject message = new JsonObject();
-        message.put("id", newGreenhouseData.remove("id"));
+        String thingId = (String) newGreenhouseData.remove("id");
+        if(!thingDescriptions.containsKey(thingId)){
+            thingDescriptions.put(thingId, this.computeThingDescription(thingId));
+        }
+        message.put("id", thingId);
         message.put("parameters", newGreenhouseData);
         try {
             InputStream is = GreenhouseCommunicationServiceLauncher.class.getResourceAsStream("/config.properties");
