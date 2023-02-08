@@ -7,8 +7,6 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
 import it.unibo.smartgh.greenhouseCommunication.GreenhouseCommunicationServiceLauncher;
-import it.unibo.smartgh.greenhouseCommunication.api.http.GreenhouseCommunicationHTTPModel;
-import it.unibo.smartgh.greenhouseCommunication.service.GreenhouseCommunicationService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,27 +18,23 @@ import java.util.Properties;
 public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunicationMQTTAPI{
 
     private static final String GREENHOUSE_PATH = "/greenhouse";
-    private final Vertx vertx;
     private JsonObject thingDescription;
     private final WebClient httpClient;
-    private String thingID;
+
+    private String thingId;
 
     /**
-     * Constructor for the greenhouse communication mqtt model
-     * @param thingID the thing id
-     * @param vertx the current instance
+     * Constructor for the greenhouse communication mqtt model.
+     * @param vertx the current instance.
      */
-    public GreenhouseCommunicationMQTTModel(String thingID, Vertx vertx){
-        this.vertx = vertx;
+    public GreenhouseCommunicationMQTTModel(Vertx vertx){
         this.httpClient = WebClient.create(vertx);
-        this.setupThingDescription(thingID);
     }
 
-    private void setupThingDescription(String thingID){
-        this.thingID = thingID;
+    private void setupThingDescription(){
         thingDescription = new JsonObject();
         thingDescription.put("@context", "https://www.w3.org/2019/wot/td/v1");
-        thingDescription.put("id", thingID);
+        thingDescription.put("id", this.thingId);
         thingDescription.put("title", "GreenHouseAutomationSystem");
 
         /* security section */
@@ -108,10 +102,17 @@ public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunication
     }
 
     @Override
+    public Future<Void> setThingId(String thingId) {
+        Promise<Void> p = Promise.promise();
+        this.thingId = thingId;
+        return p.future();
+    }
+
+    @Override
     public Future<Void> forwardNewGreenhouseData(JsonObject newGreenhouseData) {
         Promise<Void> p = Promise.promise();
         JsonObject message = new JsonObject();
-        message.put("id", this.thingID);
+        message.put("id", newGreenhouseData.remove("id"));
         message.put("parameters", newGreenhouseData);
         try {
             InputStream is = GreenhouseCommunicationServiceLauncher.class.getResourceAsStream("/config.properties");

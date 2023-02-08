@@ -30,14 +30,12 @@ public class GreenhouseCommunicationHTTPAdapterTest {
     private static String MQTT_HOST;
     private static int MQTT_PORT;
 
-    private static final String GREENHOUSE_ID = "63af0ae025d55e9840cbc1fa";
-
     @BeforeAll
     public static void start(Vertx vertx, VertxTestContext testContext){
         System.out.println("Greenhouse Communication service initializing");
         configVariable();
         GreenhouseCommunicationHTTPAPI httpModel = new GreenhouseCommunicationHTTPModel(vertx);
-        GreenhouseCommunicationMQTTAPI mqttModel = new GreenhouseCommunicationMQTTModel(GREENHOUSE_ID, vertx);
+        GreenhouseCommunicationMQTTAPI mqttModel = new GreenhouseCommunicationMQTTModel(vertx);
         GreenhouseCommunicationService service = new GreenhouseCommunicationService(httpModel, mqttModel, MQTT_HOST, HTTP_HOST, MQTT_PORT, HTTP_PORT);
         vertx.deployVerticle(service, testContext.succeedingThenComplete());
         System.out.println("Greenhouse Communication service ready");

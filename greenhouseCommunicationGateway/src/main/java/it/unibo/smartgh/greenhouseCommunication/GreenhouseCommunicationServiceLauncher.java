@@ -15,7 +15,6 @@ import java.util.Properties;
 public class GreenhouseCommunicationServiceLauncher {
 
     public static void  main(String[] args){
-        String greenhouseID = "63af0ae025d55e9840cbc1fc";
         Vertx vertx = Vertx.vertx();
         try {
             InputStream is = GreenhouseCommunicationServiceLauncher.class.getResourceAsStream("/config.properties");
@@ -27,7 +26,7 @@ public class GreenhouseCommunicationServiceLauncher {
             String mqttHost = properties.getProperty("greenhouseCommunicationMQTT.host");
             int mqttPort = Integer.parseInt(properties.getProperty("greenhouseCommunicationMQTT.port"));
             GreenhouseCommunicationHTTPModel httpModel = new GreenhouseCommunicationHTTPModel(vertx);
-            GreenhouseCommunicationMQTTModel mqttModel = new GreenhouseCommunicationMQTTModel(greenhouseID, vertx);
+            GreenhouseCommunicationMQTTModel mqttModel = new GreenhouseCommunicationMQTTModel(vertx);
             vertx.deployVerticle(new GreenhouseCommunicationService(httpModel, mqttModel, mqttHost, httpHost, mqttPort, httpPort));
         } catch (IOException e) {
             throw new RuntimeException(e);
