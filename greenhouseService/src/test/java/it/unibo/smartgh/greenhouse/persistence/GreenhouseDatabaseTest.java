@@ -6,8 +6,8 @@ import it.unibo.smartgh.greenhouse.entity.greenhouse.Modality;
 import it.unibo.smartgh.greenhouse.entity.plant.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -64,6 +64,16 @@ public class GreenhouseDatabaseTest {
         greenhouseDatabase.putActualModality(ID, Modality.AUTOMATIC);
         res = greenhouseDatabase.getGreenhouse(ID);
         assertEquals(Modality.AUTOMATIC, res.getActualModality());
+    }
+
+    @Test
+    public void testGetAllGreenhousesId(){
+        Set<String> expected = new HashSet<>(){{
+            add("greenhouse1");
+            add("greenhouse2");
+            add("greenhouse3");
+        }};
+        assertEquals(expected, new HashSet<>(greenhouseDatabase.getAllGreenhousesId()));
     }
 
 }

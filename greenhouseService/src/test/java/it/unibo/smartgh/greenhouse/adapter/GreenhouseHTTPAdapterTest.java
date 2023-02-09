@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.WebSocket;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
@@ -33,17 +32,16 @@ import it.unibo.smartgh.plantValue.persistence.PlantValueDatabase;
 import it.unibo.smartgh.plantValue.persistence.PlantValueDatabaseImpl;
 import it.unibo.smartgh.soilMoisture.service.SoilMoistureService;
 import it.unibo.smartgh.temperature.service.TemperatureService;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+
 import java.io.*;
-import java.net.Inet4Address;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static it.unibo.smartgh.greenhouse.presentation.ToJSON.modalityToJSON;
 import static it.unibo.smartgh.greenhouse.presentation.ToJSON.paramToJSON;
@@ -253,5 +251,21 @@ public class GreenhouseHTTPAdapterTest {
                     assertEquals(201, response.statusCode());
                     testContext.completeNow();
                 });
+    }
+
+    @Test
+    public void getAllGreenhouseTest(Vertx vertx, VertxTestContext testContext) {
+        Set<String> expected = new HashSet<>(){{
+            add("greenhouse1");
+            add("greenhouse2");
+            add("greenhouse3");
+        }};
+        WebClient client = WebClient.create(vertx);
+        client.get(PORT, HOST, "/greenhouse/all")
+                .as(BodyCodec.jsonArray())
+                .send(testContext.succeeding(response -> testContext.verify(() -> {
+                    assertEquals(expected, response.body().stream().collect(Collectors.toSet()));
+                    testContext.completeNow();
+                })));
     }
 }
