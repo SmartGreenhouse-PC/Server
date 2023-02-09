@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
+import io.vertx.ext.web.codec.BodyCodec;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import it.unibo.smartgh.clientCommunication.api.ClientCommunicationAPI;
@@ -28,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -139,6 +141,25 @@ public class GreenhouseClientCommunicationHTTPAdapterTest {
                         operationPath)
                 .sendJsonObject(body, testContext.succeeding(response -> testContext.verify(() -> {
                     assertEquals(expectedStatusCode, response.statusCode());
+                    testContext.completeNow();
+                })));
+    }
+
+    @Test
+    public void getAllGreenhouses(Vertx vertx, VertxTestContext testContext){
+        WebClient client = WebClient.create(vertx);
+        Set<String> expected = new HashSet<>(){{
+            add("greenhouse1");
+            add("greenhouse2");
+            add("greenhouse3");
+        }};
+        String path = "/clientCommunication/greenhouse/all";
+        client.get(CLIENT_COMMUNICATION_SERVICE_PORT,
+                        CLIENT_COMMUNICATION_SERVICE_HOST,
+                        path)
+                .as(BodyCodec.jsonArray())
+                .send(testContext.succeeding(response -> testContext.verify(() -> {
+                    assertEquals(expected, response.body().stream().collect(Collectors.toSet()));
                     testContext.completeNow();
                 })));
     }

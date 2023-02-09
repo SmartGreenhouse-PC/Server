@@ -24,4 +24,10 @@ public interface GreenhousePathManager{
      * @param request the routing context of reference.
      */
     void handlePostNotifyGreenhouseModality(RoutingContext request);
+
+    /**
+     * Gets all greenhouses saved.
+     * @param request the routing context of reference.
+     */
+    void handleGetAllGreenhouse(RoutingContext request);
 }

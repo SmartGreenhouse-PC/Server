@@ -86,4 +86,9 @@ public class ClientCommunicationModel implements ClientCommunicationAPI{
     public Future<Void> postNotifyChangeModality(JsonObject modalityInformation) {
         return this.greenhouseAPIOperationManager.postNotifyChangeModality(modalityInformation);
     }
+
+    @Override
+    public Future<JsonArray> getAllGreenhouses() {
+        return this.greenhouseAPIOperationManager.getAllGreenhouses();
+    }
 }

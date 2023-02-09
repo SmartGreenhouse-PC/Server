@@ -105,4 +105,11 @@ public interface ClientCommunicationAPI {
      * @return a {@link io.vertx.core.Future} representing the operation performed.
      */
     Future<Void> postNotifyChangeModality(JsonObject modalityInformation);
+
+    /**
+     * Gets all the greenhouses saved.
+     *
+     * @return a {@link io.vertx.core.Future} representing a list of greenhouse id.
+     */
+    Future<JsonArray> getAllGreenhouses();
 }

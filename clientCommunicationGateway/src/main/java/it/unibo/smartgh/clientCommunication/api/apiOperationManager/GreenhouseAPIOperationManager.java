@@ -4,12 +4,14 @@ import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 
@@ -84,6 +86,20 @@ public class GreenhouseAPIOperationManager {
         Promise<Void> p = Promise.promise();
         vertx.eventBus().publish("modality", modalityInformation.toString());
         p.complete();
+        return p.future();
+    }
+
+    /**
+     * Gets all the greenhouses saved.
+     * @return a {@link io.vertx.core.Future} representing a list of greenhouse id.
+     */
+    public Future<JsonArray> getAllGreenhouses() {
+        Promise<JsonArray> p = Promise.promise();
+        httpClient.get(GREENHOUSE_SERVICE_PORT, GREENHOUSE_SERVICE_HOST, GREENHOUSE_BASE_PATH + "/all")
+                .putHeader("content-type", "application/json")
+                .send()
+                .onSuccess(response -> p.complete(response.body().toJsonArray()))
+                .onFailure(p::fail);
         return p.future();
     }
 }

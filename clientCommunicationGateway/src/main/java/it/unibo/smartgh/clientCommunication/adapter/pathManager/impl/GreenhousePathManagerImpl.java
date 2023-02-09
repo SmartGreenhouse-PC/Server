@@ -4,12 +4,15 @@ import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.client.HttpResponse;
 import it.unibo.smartgh.clientCommunication.adapter.pathManager.GreenhousePathManager;
 import it.unibo.smartgh.clientCommunication.api.ClientCommunicationAPI;
 import it.unibo.smartgh.clientCommunication.customException.ParameterNotFound;
+
+import java.util.List;
 
 
 /**
@@ -73,5 +76,17 @@ public class GreenhousePathManagerImpl implements GreenhousePathManager{
                     response.setStatusMessage("Internal Server error: cause " + exception.getMessage());
                     response.end();
                 });
+    }
+
+    @Override
+    public void handleGetAllGreenhouse(RoutingContext ctx) {
+        HttpServerResponse response = ctx.response();
+        Future<JsonArray> future = this.model.getAllGreenhouses();
+        future.onSuccess(gh -> response.end(gh.toBuffer()))
+            .onFailure(exception ->{
+                response.setStatusCode(500);
+                response.setStatusMessage("Internal Server error: cause " + exception.getMessage());
+                response.end();
+            });
     }
 }

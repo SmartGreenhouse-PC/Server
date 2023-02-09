@@ -29,6 +29,7 @@ public class ClientCommunicationHTTPAdapter extends AbstractAdapter<ClientCommun
     private static int SOCKET_MODALITY_PORT;
     private static final String BASE_PATH = "/clientCommunication";
     private static final String GET_GREENHOUSE_INFO_PATH = BASE_PATH + "/greenhouse";
+    private static final String GET_ALL_GREENHOUSE = BASE_PATH + "/greenhouse/all";
     private static final String POST_GREENHOUSE_NOTIFY_MODALITY_PATH = BASE_PATH + "/greenhouse/modality/notify";
     private static final String POST_GREENHOUSE_MODALITY_PATH = BASE_PATH + "/greenhouse/modality";
     private static final String PARAMETER_CURRENT_VALUE_PATH = BASE_PATH + "/parameter";
@@ -84,6 +85,7 @@ public class ClientCommunicationHTTPAdapter extends AbstractAdapter<ClientCommun
             router.route().handler(BodyHandler.create());
 
             router.get(GET_GREENHOUSE_INFO_PATH).handler(this.greenhousePathManager::handleGetGreenhouseInfo);
+            router.get(GET_ALL_GREENHOUSE).handler(this.greenhousePathManager::handleGetAllGreenhouse);
             router.post(POST_GREENHOUSE_NOTIFY_MODALITY_PATH).handler(this.greenhousePathManager::handlePostNotifyGreenhouseModality);
             router.post(POST_GREENHOUSE_MODALITY_PATH).handler(this.greenhousePathManager::handlePostGreenhouseModality);
             router.post(PARAMETER_CURRENT_VALUE_PATH).handler(this.parametersPathManager::handlePostParameterCurrentValue);
