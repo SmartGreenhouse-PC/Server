@@ -76,6 +76,15 @@ public class GreenhouseDatabaseImpl implements GreenhouseDatabase{
         return new GreenhouseImpl(id, plant, modality);
     }
 
+    @Override
+    public List<String> getAllGreenhousesId() {
+        MongoCollection<Document> collection = connection();
+        FindIterable<Document> documents = collection.find();
+        List<String> greenhouses = new LinkedList<>();
+        documents.forEach(d -> greenhouses.add(d.getString("id")));
+        return greenhouses;
+    }
+
     private MongoCollection<Document> connection(){
         MongoClient mongoClient = MongoClients.create("mongodb://" + HOST + ":" + PORT);
         MongoDatabase database = mongoClient.getDatabase(DB_NAME);

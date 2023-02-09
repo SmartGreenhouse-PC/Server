@@ -5,6 +5,8 @@ import io.vertx.core.json.JsonObject;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Greenhouse;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Modality;
 
+import java.util.List;
+
 /**
  * Interface of the Greenhouse service API.
  */
@@ -31,4 +33,10 @@ public interface GreenhouseAPI {
      * @return the {@link io.vertx.core.Future} representing the operation performed.
      */
     Future<Void> insertAndCheckParams(String id, JsonObject parameters);
+
+    /**
+     * Gets all the greenhouses id saved.
+     * @return a list of the greenhouse id.
+     */
+    Future<List<String>> getAllGreenhouses();
 }

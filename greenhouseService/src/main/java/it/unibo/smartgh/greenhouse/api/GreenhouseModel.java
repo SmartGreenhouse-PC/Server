@@ -103,6 +103,13 @@ public class GreenhouseModel implements GreenhouseAPI{
         return promise.future();
     }
 
+    @Override
+    public Future<List<String>> getAllGreenhouses() {
+        Promise<List<String>> promise = Promise.promise();
+        promise.complete(greenhouseController.getAllGreenhousesId());
+        return promise.future();
+    }
+
     private void checkAlarm(Greenhouse greenhouse, JsonObject parameters) {
         Plant plant = greenhouse.getPlant();
         Map<ParameterType, Parameter> parametersMap = plant.getParameters();

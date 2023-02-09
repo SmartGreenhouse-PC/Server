@@ -4,6 +4,8 @@ import it.unibo.smartgh.greenhouse.entity.greenhouse.Greenhouse;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Modality;
 import it.unibo.smartgh.greenhouse.persistence.GreenhouseDatabase;
 
+import java.util.List;
+
 /**
  * Implementation of the greenhouse service controller.
  */
@@ -26,5 +28,10 @@ public class GreenhouseControllerImpl implements GreenhouseController {
     @Override
     public Greenhouse getGreenhouse(String id) {
         return this.greenhouseDatabase.getGreenhouse(id);
+    }
+
+    @Override
+    public List<String> getAllGreenhousesId() {
+        return this.greenhouseDatabase.getAllGreenhousesId();
     }
 }

@@ -16,6 +16,8 @@ import it.unibo.smartgh.greenhouse.api.GreenhouseAPI;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Greenhouse;
 import it.unibo.smartgh.greenhouse.entity.greenhouse.Modality;
 
+import java.util.List;
+
 import static it.unibo.smartgh.greenhouse.Logger.log;
 import static it.unibo.smartgh.greenhouse.presentation.ToJSON.modalityToJSON;
 import static it.unibo.smartgh.greenhouse.presentation.ToJSON.paramToJSON;
@@ -29,8 +31,9 @@ public class GreenhouseHTTPAdapter extends AbstractAdapter<GreenhouseAPI>{
     private final static int STATUS_CODE_BAD_CONTENT = 400;
     private final static int STATUS_CODE_NOT_FOUND = 404;
     private static final String BASE_PATH = "/greenhouse";
-    private static final String PARAM_PATH = "/greenhouse/param";
-    private static final String MODALITY_PATH = "/greenhouse/modality";
+    private static final String GREENHOUSE_ALL = BASE_PATH + "/all";
+    private static final String PARAM_PATH = BASE_PATH + "/param";
+    private static final String MODALITY_PATH =  BASE_PATH + "/modality";
 
     private final String host;
     private final int port;
@@ -60,6 +63,7 @@ public class GreenhouseHTTPAdapter extends AbstractAdapter<GreenhouseAPI>{
             router.get(BASE_PATH).handler(this::handleGetGreenhouse);
             router.put(BASE_PATH).handler(this::handlePutModality);
             router.post(BASE_PATH).handler(this::handlePostSensorData);
+            router.get(GREENHOUSE_ALL).handler(this::handleGetAllGreenhouses);
             router.get(MODALITY_PATH).handler(this::handleGetModality);
             router.get(PARAM_PATH).handler(this::handleGetParamValues);
 
@@ -69,6 +73,15 @@ public class GreenhouseHTTPAdapter extends AbstractAdapter<GreenhouseAPI>{
         }
 
         server.requestHandler(router).listen(this.port, this.host);
+    }
+
+    private void handleGetAllGreenhouses(RoutingContext routingContext) {
+        HttpServerResponse res = routingContext.response();
+        res.putHeader("Content-Type", "application/json");
+        Future<List<String>> fut = this.getModel().getAllGreenhouses();
+        fut.onSuccess(gh -> res.end(gson.toJson(gh)))
+                .onFailure(err -> res.setStatusCode(STATUS_CODE_NOT_FOUND).end());
+
     }
 
     private void handlePostSensorData(RoutingContext routingContext) {
