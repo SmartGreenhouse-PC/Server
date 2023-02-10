@@ -296,7 +296,7 @@ public class GreenhouseModel implements GreenhouseAPI{
                                     .put("value", parameters.getValue(p).toString())
                                     .put("date", formatter.format(new Date())))
                     .onSuccess(res -> promise.complete())
-                    .onFailure(ex -> promise.future());
+                    .onFailure(promise::fail);
         }
         promise.future();
     }
