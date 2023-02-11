@@ -1,7 +1,7 @@
 # SmartGreenhouse Application Server
 This repository contains the various micro-services of which the SmartGreenhouse Application Server is composed.
 
-## API documentation 
+## API documentation
 
 The different services implemented all have their own REST API, in particular the set of requests that can be made has been documented and formalized through [OpenAPI specifications](https://swagger.io/specification/) and the details can be viewed at the following link: [SmartGreenhouse Server 1.0.0](https://app.swaggerhub.com/apis/ANNAVITALI4/SmartGreenhouseServer/1.0.0)
 
