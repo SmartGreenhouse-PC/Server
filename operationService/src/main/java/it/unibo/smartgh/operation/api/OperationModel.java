@@ -101,9 +101,9 @@ public class OperationModel implements OperationAPI {
     private Future<Void> notifyOperation(Operation operation) {
         Promise<Void> promise = Promise.promise();
         WebClient client = WebClient.create(vertx);
-        String message = operation.getGreenhouseId() + "," + operation.getAction();
+        String message = operation.getAction().split(" ")[0] + " " + operation.getGreenhouseId() + "," + operation.getAction().split(" ")[1];
         client.post(COMM_SERVICE_PORT, COMM_SERVICE_HOST, COMM_BASE_PATH + "/" + operation.getParameter() + "Operation")
-                .sendJsonObject(new JsonObject().put("message", message))
+                .sendJsonObject(new JsonObject().put("message", operation.getAction()))
                 .onSuccess(h -> {
                     System.out.println(operation.getParameter());
                     client.post(CLIENT_SERVICE_PORT, CLIENT_SERVICE_HOST, CLIENT_BASE_PATH)
