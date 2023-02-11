@@ -1,3 +1,51 @@
+## [1.2.0](https://github.com/SmartGreenhouse-PC/Server/compare/1.1.0...1.2.0) (2023-02-11)
+
+
+### Features
+
+* add custom id to greenhouse ([e20277a](https://github.com/SmartGreenhouse-PC/Server/commit/e20277af06b063aa13014a82022e16f769fab5a1))
+* add get all greenhouse route and test ([8edeab2](https://github.com/SmartGreenhouse-PC/Server/commit/8edeab2cba2bdea1fc27d5751a8c7c38df5bad4d))
+
+
+### Bug Fixes
+
+* save parameter ([7de7a37](https://github.com/SmartGreenhouse-PC/Server/commit/7de7a372b7f4d8e708f275d871999180736ccbeb))
+* update db ([881e4be](https://github.com/SmartGreenhouse-PC/Server/commit/881e4be0262a3ea437540eb587663bb5640161fe))
+* update db ([60d195d](https://github.com/SmartGreenhouse-PC/Server/commit/60d195d6734bf094c7479333eccfea17f055ffc9))
+
+
+### Dependency updates
+
+* **deps:** update junit5 monorepo ([7461971](https://github.com/SmartGreenhouse-PC/Server/commit/7461971da776a1c70e8023ee58cbd4236c8cbe67))
+* **deps:** update openjdk docker tag to v17 ([e982f21](https://github.com/SmartGreenhouse-PC/Server/commit/e982f21b3a77d67d18de70a05825f5d6b7190602))
+
+
+### Refactoring
+
+* change mqtt model to handle multiple devices ([200e0af](https://github.com/SmartGreenhouse-PC/Server/commit/200e0af2e81bd06b3ebc6d8dde609560eace642d))
+* remove id greenhouse hardcoded ([aca1170](https://github.com/SmartGreenhouse-PC/Server/commit/aca117034c5ee90d639f35bda534be5e8b7f1a3a))
+
+
+### Tests
+
+* add test for get all greenhouse ([268e5d7](https://github.com/SmartGreenhouse-PC/Server/commit/268e5d78ea79edaedd04e56cc23bf8c1379049af))
+
+
+### Documentation
+
+* add missing documentation ([7d5c387](https://github.com/SmartGreenhouse-PC/Server/commit/7d5c3877f6889084da80b19f38848d25cc7955fb))
+
+
+### General maintenance
+
+* space ([c57bd28](https://github.com/SmartGreenhouse-PC/Server/commit/c57bd28f1b4eebd5c491e231c06454b7bfa6b14d))
+* test github actions ([44bd98e](https://github.com/SmartGreenhouse-PC/Server/commit/44bd98e444554ec455f635100a253ca37cd42e23))
+
+
+### Style improvements
+
+* remove space ([c191348](https://github.com/SmartGreenhouse-PC/Server/commit/c19134844bf07890cca110642420245d78c1459e))
+
 ## [1.1.0](https://github.com/SmartGreenhouse-22-23/Server/compare/1.0.1...1.1.0) (2023-02-06)
 
 
