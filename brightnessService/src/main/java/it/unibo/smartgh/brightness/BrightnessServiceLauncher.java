@@ -20,6 +20,10 @@ public class BrightnessServiceLauncher {
     private static final String BRIGHTNESS_DB_NAME = "brightness";
     private static final String BRIGHTNESS_COLLECTION_NAME = "brightnessValues";
 
+    /**
+     * Entry point.
+     * @param args of main.
+     */
     public static void main(String[] args) {
         try {
             InputStream is = BrightnessServiceLauncher.class.getResourceAsStream("/config.properties");

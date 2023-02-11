@@ -21,6 +21,10 @@ public class OperationServiceLauncher {
     private static final String OPERATION_DB_NAME = "operation";
     private static final String OPERATION_COLLECTION_NAME = "operation";
 
+    /**
+     * Operation service entry point.
+     * @param args of main.
+     */
     public static void main(String[] args) {
         try {
             InputStream is = OperationServiceLauncher.class.getResourceAsStream("/config.properties");

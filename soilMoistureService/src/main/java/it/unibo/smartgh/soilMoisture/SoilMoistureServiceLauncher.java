@@ -20,6 +20,10 @@ public class SoilMoistureServiceLauncher {
     private static final String SOIL_MOISTURE_DB_NAME = "soilMoisture";
     private static final String SOIL_MOISTURE_COLLECTION_NAME = "soilMoistureValues";
 
+    /**
+     * Entry point for the soil moisture service.
+     * @param args of main
+     */
     public static void main(String[] args) {
         try {
             InputStream is = SoilMoistureServiceLauncher.class.getResourceAsStream("/config.properties");

@@ -19,6 +19,11 @@ public class HumidityServiceLauncher {
 
     private static final String HUMIDITY_DB_NAME = "humidity";
     private static final String HUMIDITY_COLLECTION_NAME = "humidityValues";
+
+    /**
+     * Entry point for the humidity service
+     * @param args of main
+     */
     public static void main(String[] args) {
         try {
             InputStream is = HumidityServiceLauncher.class.getResourceAsStream("/config.properties");

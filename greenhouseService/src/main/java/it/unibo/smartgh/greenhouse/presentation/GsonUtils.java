@@ -17,7 +17,10 @@ import it.unibo.smartgh.greenhouse.presentation.serializer.PlantSerializer;
  * This is a utility class to instantiate the {@link com.google.gson.JsonSerializer} and {@link com.google.gson.JsonDeserializer}
  */
 public class GsonUtils {
-
+    /**
+     * Create a Gson with custom serializer and deserializer.
+     * @return a gson instance
+     */
     public static Gson createGson() {
         return new GsonBuilder()
             .excludeFieldsWithoutExposeAnnotation()

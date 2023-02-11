@@ -12,6 +12,13 @@ public class ParameterImpl implements Parameter{
     private final Double max;
     private final String unit;
 
+    /**
+     * Constructor for the parameter.
+     * @param name of the parameter
+     * @param min value of the parameter
+     * @param max value of the parameter
+     * @param unit of the parameter
+     */
     public ParameterImpl(String name, Double min, Double max, String unit) {
         this.name = name;
         this.min = min;

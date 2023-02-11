@@ -19,6 +19,10 @@ public class TemperatureServiceLauncher {
     private static final String TEMPERATURE_DB_NAME = "temperature";
     private static final String TEMPERATURE_COLLECTION_NAME = "temperatureValues";
 
+    /**
+     * Entry point for the temperature service.
+     * @param args of main
+     */
     public static void main(String[] args) {
         try {
             InputStream is = TemperatureServiceLauncher.class.getResourceAsStream("/config.properties");
