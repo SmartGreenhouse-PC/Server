@@ -19,6 +19,10 @@ public class GreenhouseServiceLauncher {
     private static String HOST;
     private static int PORT;
 
+    /**
+     * Entry point of greenhouse service.
+     * @param args of main
+     */
     public static void main(String[] args) {
         System.out.println("Greenhouse service initializing");
         try {

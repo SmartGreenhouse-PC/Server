@@ -13,7 +13,10 @@ import java.util.Properties;
  * This is the entry point to execute the service.
  */
 public class GreenhouseCommunicationServiceLauncher {
-
+    /**
+     * Entry point of greenhouse communication service.
+     * @param args of main
+     */
     public static void  main(String[] args){
         Vertx vertx = Vertx.vertx();
         try {

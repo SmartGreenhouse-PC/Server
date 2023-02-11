@@ -15,6 +15,9 @@ public abstract class AbstractAdapter<API>  {
 
 	private final Vertx vertx;
 	private final API model;
+	/**
+	 * Gson instance
+	 */
 	protected final Gson gson;
 
 	/**

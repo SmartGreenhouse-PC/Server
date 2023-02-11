@@ -27,6 +27,9 @@ public class GreenhouseDatabaseImpl implements GreenhouseDatabase{
     private static String HOST;
     private static int PORT;
 
+    /**
+     * Constructor of Greenhouse database
+     */
     public GreenhouseDatabaseImpl() {
 
         try {

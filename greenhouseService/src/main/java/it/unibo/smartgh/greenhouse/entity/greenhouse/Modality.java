@@ -4,5 +4,12 @@ package it.unibo.smartgh.greenhouse.entity.greenhouse;
  * The possible management modality of a greenhouse.
  */
 public enum Modality {
-    MANUAL, AUTOMATIC;
+    /**
+     * Manual modality
+     */
+    MANUAL,
+    /**
+     * Automatic modality
+     */
+    AUTOMATIC;
 }

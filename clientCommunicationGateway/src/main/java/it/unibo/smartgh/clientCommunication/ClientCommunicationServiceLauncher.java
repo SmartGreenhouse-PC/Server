@@ -13,7 +13,10 @@ import java.util.Properties;
  * Class the represents the entry point to run the Client Communication Service.
  */
 public class ClientCommunicationServiceLauncher {
-
+    /**
+     * Entry point of client communication service.
+     * @param args of main
+     */
     public static void  main(String[] args){
         try {
             InputStream is = ClientCommunicationServiceLauncher.class.getResourceAsStream("/config.properties");
