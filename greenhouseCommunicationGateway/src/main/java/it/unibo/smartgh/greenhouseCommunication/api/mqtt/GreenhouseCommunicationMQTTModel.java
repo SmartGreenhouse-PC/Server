@@ -10,6 +10,7 @@ import it.unibo.smartgh.greenhouseCommunication.GreenhouseCommunicationServiceLa
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -20,13 +21,14 @@ public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunication
 
     private static final String GREENHOUSE_PATH = "/greenhouse";
     private final WebClient httpClient;
-    private Map<String, JsonObject> thingDescriptions;
+    private final Map<String, JsonObject> thingDescriptions;
 
     /**
      * Constructor for the greenhouse communication mqtt model.
      * @param vertx the current instance.
      */
     public GreenhouseCommunicationMQTTModel(Vertx vertx){
+        this.thingDescriptions = new HashMap<>();
         this.httpClient = WebClient.create(vertx);
     }
 
