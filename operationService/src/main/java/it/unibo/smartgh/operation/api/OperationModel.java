@@ -102,6 +102,7 @@ public class OperationModel implements OperationAPI {
         Promise<Void> promise = Promise.promise();
         WebClient client = WebClient.create(vertx);
         String message = operation.getAction().split(" ")[0] + " " + operation.getGreenhouseId() + "," + operation.getAction().split(" ")[1];
+        System.out.println(message);
         client.post(COMM_SERVICE_PORT, COMM_SERVICE_HOST, COMM_BASE_PATH + "/" + operation.getParameter() + "Operation")
                 .sendJsonObject(new JsonObject().put("message", message))
                 .onSuccess(h -> {
