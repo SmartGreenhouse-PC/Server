@@ -1,3 +1,18 @@
+## [1.2.1](https://github.com/SmartGreenhouse-PC/Server/compare/1.2.0...1.2.1) (2023-02-12)
+
+
+### Bug Fixes
+
+* change operation message sent ([dcbecf2](https://github.com/SmartGreenhouse-PC/Server/commit/dcbecf28d74e60771438413bf2a08542f76a7e1a))
+* fix map inizialization ([2e9064c](https://github.com/SmartGreenhouse-PC/Server/commit/2e9064c7623112ef7539c851956438766f1de52e))
+* fix message operation ([d6e8c3a](https://github.com/SmartGreenhouse-PC/Server/commit/d6e8c3a53a003b912ee4db161f9548458be4558d))
+* fix message send ([e576d0a](https://github.com/SmartGreenhouse-PC/Server/commit/e576d0af76b07b764e3685cac357510404322b46))
+
+
+### General maintenance
+
+* remove print ([3a4a48f](https://github.com/SmartGreenhouse-PC/Server/commit/3a4a48f4970bfd3ebeda5993651fed4948b9a7b1))
+
 ## [1.2.0](https://github.com/SmartGreenhouse-PC/Server/compare/1.1.0...1.2.0) (2023-02-11)
 
 
