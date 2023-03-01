@@ -1,11 +1,14 @@
 package it.unibo.smartgh.greenhouseCommunication.api.mqtt;
 
+import io.netty.handler.codec.mqtt.MqttQoS;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
+import io.vertx.mqtt.MqttClient;
 import it.unibo.smartgh.greenhouseCommunication.GreenhouseCommunicationServiceLauncher;
 
 import java.io.IOException;
@@ -22,6 +25,7 @@ public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunication
     private static final String GREENHOUSE_PATH = "/greenhouse";
     private final WebClient httpClient;
     private final Map<String, JsonObject> thingDescriptions;
+    private final MqttClient mqttClient;
 
     /**
      * Constructor for the greenhouse communication mqtt model.
@@ -30,6 +34,7 @@ public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunication
     public GreenhouseCommunicationMQTTModel(Vertx vertx){
         this.thingDescriptions = new HashMap<>();
         this.httpClient = WebClient.create(vertx);
+        this.mqttClient = MqttClient.create(vertx);
     }
 
     private JsonObject computeThingDescription(String thingId){
@@ -110,24 +115,20 @@ public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunication
     @Override
     public Future<Void> forwardNewGreenhouseData(JsonObject newGreenhouseData) {
         Promise<Void> p = Promise.promise();
-        JsonObject message = new JsonObject();
-        String thingId = (String) newGreenhouseData.remove("id");
+        String thingId = newGreenhouseData.getString("id");
         if(!thingDescriptions.containsKey(thingId)){
             thingDescriptions.put(thingId, this.computeThingDescription(thingId));
         }
-        message.put("id", thingId);
-        message.put("parameters", newGreenhouseData);
         try {
             InputStream is = GreenhouseCommunicationServiceLauncher.class.getResourceAsStream("/config.properties");
             Properties properties = new Properties();
             properties.load(is);
-
-            String host = properties.getProperty("greenhouse.host");
-            int port = Integer.parseInt(properties.getProperty("greenhouse.port"));
-            httpClient.post(port, host, GREENHOUSE_PATH)
-                    .putHeader("content-type", "application/json")
-                    .sendJsonObject(message);
-
+            //sulla base del parametro invia il messaggio MQTT ai servizi ai microservizi
+            mqttClient.publish(newGreenhouseData.getString("topic"),
+                    Buffer.buffer(newGreenhouseData.toString()),
+                    MqttQoS.AT_LEAST_ONCE,
+                    false,
+                    false);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
