@@ -116,13 +116,13 @@ public class GreenhouseHTTPAdapterTest {
             System.out.println(k + " service initializing");
             PlantValueDatabase database = new PlantValueDatabaseImpl(k, k + "Values", MONGODB_HOST, MONGODB_PORT);
             PlantValueController controller = new PlantValueControllerImpl(database);
-            PlantValueModel modelP = new PlantValueModel(controller);
+            PlantValueModel modelP = new PlantValueModel(vertx, controller);
             Verticle serviceP = null;
             String host = v.get("host");
             int port = Integer.parseInt(v.get("port"));
             switch (k) {
                 case "brightness": {
-                    serviceP = new BrightnessService(modelP, host, port);
+                    //serviceP = new BrightnessService(modelP, host, port); TODO
                     break;
                 }
                 case "temperature": {

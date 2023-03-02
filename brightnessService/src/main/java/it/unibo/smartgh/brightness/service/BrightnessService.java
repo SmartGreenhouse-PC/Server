@@ -1,12 +1,16 @@
 package it.unibo.smartgh.brightness.service;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import it.unibo.smartgh.adapter.AbstractAdapter;
 import it.unibo.smartgh.brightness.adapter.BrightnessHTTPAdapter;
+import it.unibo.smartgh.brightness.adapter.BrightnessMQTTAdapter;
+import it.unibo.smartgh.brightness.api.BrightnessAPI;
 import it.unibo.smartgh.plantValue.api.PlantValueAPI;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 /**
@@ -15,20 +19,27 @@ import java.util.List;
 public class BrightnessService extends AbstractVerticle {
 
     private final List<AbstractAdapter> adapters;
-    private final PlantValueAPI model;
+    private final BrightnessAPI model;
     private final String host;
     private final int port;
+    private final String mqttHost;
+    private final int mqttPort;
+
     /**
      * Constructor of brightness service.
      * @param model the brightness model.
      * @param host the brightness service host.
      * @param port the brightness service port.
+     * @param mqttHost the broker host.
+     * @param mqttPort the broker port.
      */
-    public BrightnessService(PlantValueAPI model, String host, int port) {
+    public BrightnessService(BrightnessAPI model, String host, int port, String mqttHost, int mqttPort) {
         this.adapters = new LinkedList<>();
         this.model = model;
         this.host = host;
         this.port = port;
+        this.mqttHost = mqttHost;
+        this.mqttPort = mqttPort;
     }
 
     @Override
@@ -38,24 +49,58 @@ public class BrightnessService extends AbstractVerticle {
     }
 
     private void installAdapters(Promise<Void> startPromise) {
+        ArrayList<Future> allFutures = new ArrayList<Future>();
+        allFutures.add(this.installHttpAdapter());
+        allFutures.add(this.installMQTTAdapter());
+        CompositeFuture.all(allFutures).onComplete(res -> {
+            System.out.println("Adapters installed.");
+            startPromise.complete();
+        });
+
+    }
+
+    private Future<Void> installHttpAdapter(){
         try {
-            BrightnessHTTPAdapter httpAdapter = new BrightnessHTTPAdapter(model, this.getVertx(), host, port);
-            Promise<Void> promise = Promise.promise();
-            httpAdapter.setupAdapter(promise);
-            Future<Void> fut = promise.future();
-            fut.onSuccess(res -> {
-                System.out.println("HTTP adapter installed.");
-                adapters.add(httpAdapter);
-                startPromise.complete();
-            }).onFailure(f -> {
-                startPromise.fail("HTTP adapter not installed");
-                System.out.println("HTTP adapter not installed");
+            model.getPlantValueAPI().onSuccess(api -> {
+                BrightnessHTTPAdapter httpAdapter = new BrightnessHTTPAdapter(api, this.getVertx(), host, port);
+                Promise<Void> promise = Promise.promise();
+                httpAdapter.setupAdapter(promise);
+                Future<Void> fut = promise.future();
+                fut.onSuccess(res -> {
+                    System.out.println("HTTP adapter installed.");
+                    adapters.add(httpAdapter);
+                }).onFailure(f -> {
+                    System.out.println("HTTP adapter not installed");
+                });
+
             });
         }  catch (Exception ex) {
             ex.printStackTrace();
-            startPromise.fail("HTTP adapter installation failed.");
             System.out.println("HTTP adapter installation failed.");
         }
+
+        return Future.failedFuture("HTTP adapter not installed");
+    }
+
+    private Future<Void> installMQTTAdapter(){
+        try{
+            BrightnessMQTTAdapter mqttAdapter = new BrightnessMQTTAdapter(model, mqttHost, mqttPort, this.getVertx());
+
+            Promise<Void> mqttPromise = Promise.promise();
+            Future<Void> mqttFuture = mqttPromise.future();
+            mqttFuture.onSuccess(res -> {
+                adapters.add(mqttAdapter);
+            }).onFailure( error -> {
+                System.out.println("MQTT adapter not installed");
+            });
+            mqttAdapter.setupAdapter(mqttPromise);
+
+            return mqttFuture;
+        }catch (Exception ex) {
+            System.out.println("HTTP adapter installation failed.");
+        }
+
+        return Future.failedFuture("MQTT adapter not installed");
     }
 
 }

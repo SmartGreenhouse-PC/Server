@@ -1,6 +1,8 @@
 package it.unibo.smartgh.brightness;
 
 import io.vertx.core.Vertx;
+import it.unibo.smartgh.brightness.api.BrightnessAPI;
+import it.unibo.smartgh.brightness.api.BrightnessModel;
 import it.unibo.smartgh.brightness.service.BrightnessService;
 import it.unibo.smartgh.plantValue.api.PlantValueModel;
 import it.unibo.smartgh.plantValue.controller.PlantValueController;
@@ -32,13 +34,16 @@ public class BrightnessServiceLauncher {
 
             String host = properties.getProperty("brightness.host");
             int port = Integer.parseInt(properties.getProperty("brightness.port"));
+            String mqttHost = properties.getProperty("broker.host");
+            int mqttPort = Integer.parseInt(properties.getProperty("broker.port"));
             String mongodbHost = properties.getProperty("mongodb.host");
             int mongodbPort = Integer.parseInt(properties.getProperty("mongodb.port"));
             Vertx vertx = Vertx.vertx();
             PlantValueDatabase database = new PlantValueDatabaseImpl(BRIGHTNESS_DB_NAME, BRIGHTNESS_COLLECTION_NAME, mongodbHost, mongodbPort);
             PlantValueController controller = new PlantValueControllerImpl(database);
-            PlantValueModel model = new PlantValueModel(controller);
-            vertx.deployVerticle(new BrightnessService(model, host, port));
+            PlantValueModel plantValueModel = new PlantValueModel(vertx, controller);
+            BrightnessAPI model = new BrightnessModel(plantValueModel);
+            vertx.deployVerticle(new BrightnessService(model, host, port, mqttHost, mqttPort));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

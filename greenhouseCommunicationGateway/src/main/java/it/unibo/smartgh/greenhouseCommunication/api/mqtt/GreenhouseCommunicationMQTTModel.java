@@ -25,7 +25,7 @@ public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunication
     private static final String GREENHOUSE_PATH = "/greenhouse";
     private final WebClient httpClient;
     private final Map<String, JsonObject> thingDescriptions;
-    private final MqttClient mqttClient;
+    //private final MqttClient mqttClient;
 
     /**
      * Constructor for the greenhouse communication mqtt model.
@@ -34,7 +34,7 @@ public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunication
     public GreenhouseCommunicationMQTTModel(Vertx vertx){
         this.thingDescriptions = new HashMap<>();
         this.httpClient = WebClient.create(vertx);
-        this.mqttClient = MqttClient.create(vertx);
+        //this.mqttClient = MqttClient.create(vertx);
     }
 
     private JsonObject computeThingDescription(String thingId){
@@ -113,7 +113,7 @@ public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunication
     }
 
     @Override
-    public Future<Void> forwardNewGreenhouseData(JsonObject newGreenhouseData) {
+    public Future<Void> forwardNewGreenhouseData(MqttClient mqttClient, JsonObject newGreenhouseData) {
         Promise<Void> p = Promise.promise();
         String thingId = newGreenhouseData.getString("id");
         if(!thingDescriptions.containsKey(thingId)){
