@@ -1,6 +1,7 @@
 package it.unibo.smartgh.plantValue.api;
 
 import io.vertx.core.Future;
+import io.vertx.core.json.JsonObject;
 import it.unibo.smartgh.plantValue.entity.PlantValue;
 
 import java.util.List;
@@ -32,4 +33,11 @@ public interface PlantValueAPI {
      * @return the future representing list of values.
      */
     Future<List<PlantValue>> getHistory(String greenhouseId, int limit);
+
+    /**
+     * Perform the corrective action
+     * @param action to be performed
+     * @return the future representing the action performed.
+     */
+    Future<Void> performAction(JsonObject action);
 }

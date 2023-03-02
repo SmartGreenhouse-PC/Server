@@ -83,8 +83,8 @@ public class ParameterClientCommunicationHTTPAdapterTest {
         configVariable();
         PlantValueDatabase database = new PlantValueDatabaseImpl(BRIGHTNESS_DB_NAME, BRIGHTNESS_COLLECTION_NAME, MONGODB_HOST, MONGODB_PORT);
         PlantValueController controller = new PlantValueControllerImpl(database);
-        PlantValueModel model = new PlantValueModel(controller);
-        vertx.deployVerticle(new BrightnessService(model, BRIGHTNESS_SERVICE_HOST, BRIGHTNESS_SERVICE_PORT));
+        PlantValueModel model = new PlantValueModel(vertx, controller);
+        //vertx.deployVerticle(new BrightnessService(model, BRIGHTNESS_SERVICE_HOST, BRIGHTNESS_SERVICE_PORT)); TODO
         System.out.println("Brightness service ready");
         System.out.println("Client Communication service initializing");
         ClientCommunicationAPI clientCommunicationModel = new ClientCommunicationModel(vertx);
