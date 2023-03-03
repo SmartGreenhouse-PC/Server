@@ -4,17 +4,10 @@ package it.unibo.smartgh.plantValue.entity;
  * Builder for the parameter entity.
  */
 public class ParameterBuilder {
-    private final String name;
     private Double min;
     private Double max;
-    private String unit;
 
-    /**
-     * Constructor for the parameter builder.
-     * @param name of the parameter
-     */
-    public ParameterBuilder(String name) {
-        this.name = name;
+    public ParameterBuilder(){
     }
 
     /**
@@ -38,20 +31,10 @@ public class ParameterBuilder {
     }
 
     /**
-     * Parameter unit.
-     * @param unit of the parameter.
-     * @return the builder.
-     */
-    public ParameterBuilder unit(String unit){
-        this.unit = unit;
-        return this;
-    }
-
-    /**
      * Create a new Parameter object
      * @return the {@link Parameter} created.
      */
     public Parameter build(){
-        return new ParameterImpl(name, min, max, unit);
+        return new ParameterImpl(min, max);
     }
 }
