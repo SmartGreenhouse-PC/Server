@@ -2,6 +2,8 @@ package it.unibo.smartgh.plantValue.api;
 
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
+import it.unibo.smartgh.plantValue.entity.Modality;
+import it.unibo.smartgh.plantValue.entity.Parameter;
 import it.unibo.smartgh.plantValue.entity.PlantValue;
 
 import java.util.List;
@@ -36,8 +38,36 @@ public interface PlantValueAPI {
 
     /**
      * Perform the corrective action
+     * @param ghId greenhouse id
+     * @param parameter parameter name
      * @param action to be performed
+     * @param modality of greenhouse
      * @return the future representing the action performed.
      */
-    Future<Void> performAction(JsonObject action);
+    Future<Void> performAction(String ghId, String parameter, String action, String modality);
+
+    /**
+     * Get the future representing a parameter
+     * @param id of the greenhouse
+     * @param parameterName name of the parameter
+     * @return the future representing a parameter
+     */
+    Future<Parameter> getParameter(String id, String parameterName);
+
+    /**
+     * Get the future representing the greenhouse management modality
+     * @param id of the greenhouse
+     * @return the future representing the greenhouse management modality
+     */
+    Future<Modality> getGreenhouseModality(String id);
+
+    /**
+     * Future that represent the notification to client of a new data
+     * @param id of the greenhouse
+     * @param parameter name of the parameter
+     * @param value actual value
+     * @param status if the value is or is not in the range
+     * @return the future representing the notification to client.
+     */
+    Future<Void> notifyClients(String id, String parameter, Double value, String status);
 }
