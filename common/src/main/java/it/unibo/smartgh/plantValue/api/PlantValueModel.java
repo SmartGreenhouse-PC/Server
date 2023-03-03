@@ -97,6 +97,7 @@ public class PlantValueModel implements PlantValueAPI {
 
     @Override
     public Future<Void> performAction(String ghId, String parameter, String action, String modality){
+        System.out.println("inside");
         Promise<Void> promise = Promise.promise();
         try{
             WebClient client = WebClient.create(vertx);
@@ -109,7 +110,8 @@ public class PlantValueModel implements PlantValueAPI {
                                     .put("date", formatter.format(new Date()))
                                     .put("parameter", parameter)
                                     .put("action", action)
-                    ).onSuccess(res -> promise.complete());
+                    ).onSuccess(res -> promise.complete())
+                    .onFailure(System.out::println);
         } catch (Exception e) {
             promise.fail(e);
         }
@@ -169,7 +171,7 @@ public class PlantValueModel implements PlantValueAPI {
                                 .put("value", value)
                                 .put("date", formatter.format(new Date()))
                                 .put("status", status)
-                );
+                ).onSuccess(res -> promise.complete());
         return promise.future();
     }
 }

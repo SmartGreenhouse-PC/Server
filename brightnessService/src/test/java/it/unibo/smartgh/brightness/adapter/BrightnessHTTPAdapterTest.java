@@ -43,8 +43,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BrightnessHTTPAdapterTest {
     private static final String BRIGHTNESS_DB_NAME = "brightness";
     private static final String BRIGHTNESS_COLLECTION_NAME = "brightnessValues";
-    private static String BROKER_HOST;
-    private static int BROKER_PORT;
     private static String SERVICE_HOST;
     private static int SERVICE_PORT;
 
@@ -73,7 +71,7 @@ public class BrightnessHTTPAdapterTest {
         }
         PlantValueController controller = new PlantValueControllerImpl(database);
         BrightnessAPI model = new BrightnessModel(new PlantValueModel(vertx, controller));
-        BrightnessService service = new BrightnessService(model, SERVICE_HOST, SERVICE_PORT, BROKER_HOST, BROKER_PORT);
+        BrightnessService service = new BrightnessService(model, SERVICE_HOST, SERVICE_PORT);
         vertx.deployVerticle(service, testContext.succeedingThenComplete());
         try {
             testContext.awaitCompletion(10, TimeUnit.SECONDS);
@@ -91,8 +89,6 @@ public class BrightnessHTTPAdapterTest {
 
             SERVICE_HOST = properties.getProperty("brightness.host");
             SERVICE_PORT = Integer.parseInt(properties.getProperty("brightness.port"));
-            BROKER_HOST = properties.getProperty("broker.host");
-            BROKER_PORT = Integer.parseInt(properties.getProperty("broker.port"));
             String dbHost = properties.getProperty("mongodb.host");
             int dbPort = Integer.parseInt(properties.getProperty("mongodb.port"));
             database = new PlantValueDatabaseImpl(BRIGHTNESS_DB_NAME, BRIGHTNESS_COLLECTION_NAME,

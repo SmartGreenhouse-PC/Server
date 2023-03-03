@@ -11,6 +11,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import it.unibo.smartgh.adapter.AbstractAdapter;
+import it.unibo.smartgh.brightness.api.BrightnessAPI;
 import it.unibo.smartgh.customException.EmptyDatabaseException;
 import it.unibo.smartgh.plantValue.api.PlantValueAPI;
 import it.unibo.smartgh.plantValue.entity.PlantValue;
@@ -20,7 +21,7 @@ import java.util.List;
 /**
  * Class that represents the HTTP adapter of the Brightness.
  */
-public class BrightnessHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
+public class BrightnessHTTPAdapter extends AbstractAdapter<BrightnessAPI> {
 
     private static final String BASE_PATH = "/brightness";
     private static final String HISTORY_PATH = BASE_PATH + "/history";
@@ -28,6 +29,7 @@ public class BrightnessHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
 
     private final String host;
     private final int port;
+    private PlantValueAPI plantValueAPI;
     /**
      * Constructor of {@link BrightnessHTTPAdapter}.
      * @param model the brightness API model.
@@ -35,10 +37,13 @@ public class BrightnessHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
      * @param host the brightness service host
      * @param port the brightness service port
      */
-    public BrightnessHTTPAdapter(PlantValueAPI model, Vertx vertx, String host, int port) {
+    public BrightnessHTTPAdapter(BrightnessAPI model, Vertx vertx, String host, int port) {
         super(model, vertx);
         this.host = host;
         this.port = port;
+        this.getModel().getPlantValueAPI().onSuccess(api -> {
+            this.plantValueAPI = api;
+        });
     }
 
     @Override
@@ -81,7 +86,7 @@ public class BrightnessHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
             res.setStatusMessage(BAD_REQUEST_MESSAGE);
             res.end();
         }else {
-            Future<PlantValue> fut = this.getModel().getCurrentValue(greenhouseId);
+            Future<PlantValue> fut = this.plantValueAPI.getCurrentValue(greenhouseId);
             fut.onSuccess(brightnessValue -> res.end(gson.toJson(brightnessValue, PlantValueImpl.class)))
                     .onFailure(exception -> handleFailureInGetMethod(res, exception));
         }
@@ -98,7 +103,7 @@ public class BrightnessHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
             res.end();
         } else {
             res.putHeader("Content-Type", "application/json");
-            Future<List<PlantValue>> fut = this.getModel().getHistory(greenhouseId, Integer.parseInt(limit));
+            Future<List<PlantValue>> fut = this.plantValueAPI.getHistory(greenhouseId, Integer.parseInt(limit));
             fut.onSuccess(list -> res.end(gson.toJson(list)))
                     .onFailure(exception -> handleFailureInGetMethod(res, exception));
         }
@@ -108,8 +113,7 @@ public class BrightnessHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
         HttpServerResponse response = request.response();
         response.putHeader("content-type", "application/json");
         try {
-            PlantValue brightnessValue = gson.fromJson(request.body().asString(), PlantValueImpl.class);
-            Future<Void> fut = this.getModel().postValue(brightnessValue);
+            Future<Void> fut = this.getModel().newDataReceived(request.body().asJsonObject());
 
             fut.onSuccess(res -> {
                 response.setStatusCode(201);
