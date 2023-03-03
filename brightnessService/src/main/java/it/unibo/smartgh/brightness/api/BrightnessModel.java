@@ -35,7 +35,7 @@ public class BrightnessModel implements BrightnessAPI {
     }
 
     private Future<Void> performOperation(JsonObject message) {
-        Promise promise = Promise.promise();
+        Promise<Void> promise = Promise.promise();
         try {
             String id = message.getString("id");
             this.plantValueModel.getGreenhouseModality(id)

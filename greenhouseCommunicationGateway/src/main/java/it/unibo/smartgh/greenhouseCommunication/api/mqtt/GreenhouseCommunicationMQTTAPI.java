@@ -20,10 +20,9 @@ public interface GreenhouseCommunicationMQTTAPI {
     /**
      * Forward the new data incoming from the greenhouse microcontroller.
      *
-     * @param mqttClient
      * @param newGreenhouseData the new data sensed.
      * @return the future representing the forward.
      */
-    Future<Void> forwardNewGreenhouseData(MqttClient mqttClient, JsonObject newGreenhouseData);
+    Future<Void> forwardNewGreenhouseData(JsonObject newGreenhouseData);
 
 }

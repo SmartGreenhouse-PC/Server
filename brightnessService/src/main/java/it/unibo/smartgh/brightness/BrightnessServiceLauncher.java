@@ -34,8 +34,6 @@ public class BrightnessServiceLauncher {
 
             String host = properties.getProperty("brightness.host");
             int port = Integer.parseInt(properties.getProperty("brightness.port"));
-            String mqttHost = properties.getProperty("broker.host");
-            int mqttPort = Integer.parseInt(properties.getProperty("broker.port"));
             String mongodbHost = properties.getProperty("mongodb.host");
             int mongodbPort = Integer.parseInt(properties.getProperty("mongodb.port"));
             Vertx vertx = Vertx.vertx();
@@ -43,7 +41,7 @@ public class BrightnessServiceLauncher {
             PlantValueController controller = new PlantValueControllerImpl(database);
             PlantValueModel plantValueModel = new PlantValueModel(vertx, controller);
             BrightnessAPI model = new BrightnessModel(plantValueModel);
-            vertx.deployVerticle(new BrightnessService(model, host, port, mqttHost, mqttPort));
+            vertx.deployVerticle(new BrightnessService(model, host, port));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
