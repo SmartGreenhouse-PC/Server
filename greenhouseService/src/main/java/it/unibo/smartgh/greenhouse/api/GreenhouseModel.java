@@ -90,27 +90,13 @@ public class GreenhouseModel implements GreenhouseAPI{
     }
 
     @Override
-    public Future<Void> insertAndCheckParams(String id, JsonObject parameters) {
-        Promise<Void> promise = Promise.promise();
-        try {
-            Greenhouse greenhouse = greenhouseController.getGreenhouse(id);
-            storeParameters(id, parameters);
-            checkAlarm(greenhouse, parameters);
-        } catch (NoSuchElementException ex) {
-            promise.fail("No greenhouse");
-        }
-        promise.complete();
-        return promise.future();
-    }
-
-    @Override
     public Future<List<String>> getAllGreenhouses() {
         Promise<List<String>> promise = Promise.promise();
         promise.complete(greenhouseController.getAllGreenhousesId());
         return promise.future();
     }
 
-    private void checkAlarm(Greenhouse greenhouse, JsonObject parameters) {
+    private void checkAlarm(Greenhouse greenhouse, JsonObject parameters) { //TODO DELETE
         Plant plant = greenhouse.getPlant();
         Map<ParameterType, Parameter> parametersMap = plant.getParameters();
 
@@ -133,15 +119,6 @@ public class GreenhouseModel implements GreenhouseAPI{
                             greenhouse.getActualModality() == Modality.AUTOMATIC);
                     break;
                 }
-                case "Bright": {
-
-                    checkBrightness(greenhouse,
-                            parametersMap.get(ParameterType.BRIGHTNESS).getMin(),
-                            parametersMap.get(ParameterType.BRIGHTNESS).getMax(),
-                            valueOf(parameters.getValue("Bright").toString()),
-                            greenhouse.getActualModality() == Modality.AUTOMATIC);
-                    break;
-                }
                 case "Hum": {
                     checkHumidity(greenhouse,
                             parametersMap.get(ParameterType.HUMIDITY).getMin(),
@@ -154,7 +131,7 @@ public class GreenhouseModel implements GreenhouseAPI{
         }
     }
 
-    private void insertOperation (String ghId, String parameter, String action, String modality){
+    private void insertOperation (String ghId, String parameter, String action, String modality){ //TODO DELETE
         WebClient client = WebClient.create(vertx);
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
         client.post(OPERATION_PORT, OPERATION_HOST, "/operations")
@@ -169,7 +146,7 @@ public class GreenhouseModel implements GreenhouseAPI{
 
     }
 
-    private void checkHumidity(Greenhouse gh, Double min, Double max, Double hum, boolean automatic) {
+    private void checkHumidity(Greenhouse gh, Double min, Double max, Double hum, boolean automatic) { //TODO DELETE
         String parameter = "humidity";
         String status = "normal";
         if (hum.compareTo(max) > 0){
@@ -186,7 +163,7 @@ public class GreenhouseModel implements GreenhouseAPI{
         sendToClient(gh.getId(), parameter, hum, status);
     }
 
-    private void checkSoilMoisture(Greenhouse gh, Double min, Double max, Double soil, boolean automatic) {
+    private void checkSoilMoisture(Greenhouse gh, Double min, Double max, Double soil, boolean automatic) { //TODO DELETE
         String parameter = "soilMoisture";
         String status = "normal";
         if (soil.compareTo(min) < 0){
@@ -203,26 +180,7 @@ public class GreenhouseModel implements GreenhouseAPI{
         sendToClient(gh.getId(), parameter, soil, status);
     }
 
-    private void checkBrightness(Greenhouse gh, Double min, Double max, Double brigh, boolean automatic) {
-        String parameter = "brightness";
-        String status = "normal";
-        if (brigh.compareTo(min) < 0){
-            status = "alarm";
-            if (automatic) {
-                int newBrigh = brigh.compareTo(255.0) >= 0 ? 255 : brigh.intValue() + 5;
-                insertOperation(gh.getId(), parameter, "LUMINOSITY " + newBrigh, gh.getActualModality().toString());
-            }
-        }  else if (brigh.compareTo(max) > 0) {
-            status = "alarm";
-            if (automatic) {
-                int newBrigh = brigh.compareTo(0.0) <= 0 ? 0 : brigh.intValue() - 5;
-                insertOperation(gh.getId(), parameter, "LUMINOSITY " + newBrigh, gh.getActualModality().toString());
-            }
-        }
-        sendToClient(gh.getId(), parameter, brigh, status);
-    }
-
-    private void checkTemperature(Greenhouse gh, Double min, Double max, Double temp, boolean automatic) {
+    private void checkTemperature(Greenhouse gh, Double min, Double max, Double temp, boolean automatic) { //TODO DELETE
         String parameter = "temperature";
         String status = "normal";
         if (temp.compareTo(min) < 0){
@@ -245,7 +203,7 @@ public class GreenhouseModel implements GreenhouseAPI{
         sendToClient(gh.getId(), parameter, temp, status);
     }
 
-    private void sendToClient(String id, String parameter, Double value, String status){
+    private void sendToClient(String id, String parameter, Double value, String status){ //TODO DELETE
         WebClient client = WebClient.create(vertx);
         Promise<Void> promise = Promise.promise();
         List<Future> futures = new ArrayList<>();
@@ -259,45 +217,6 @@ public class GreenhouseModel implements GreenhouseAPI{
                                     .put("date", formatter.format(new Date()))
                                     .put("status", status)
                     ));
-        promise.future();
-    }
-
-    private void storeParameters(String id, JsonObject parameters) {
-        WebClient client = WebClient.create(vertx);
-
-        Promise<Void> promise = Promise.promise();
-        for (String p: parameters.fieldNames()) {
-            String path = "";
-            switch (p) {
-                case "Temp":{
-                    path = "temperature";
-                    break;
-                }
-                case "Soil": {
-                    path = "soilMoisture";
-                    break;
-                }
-                case "Bright": {
-                    path = "brightness";
-                    break;
-                }
-                case "Hum": {
-                    path = "humidity";
-                    break;
-                }
-            }
-            String host = PARAMETERS.get(path).get("host");
-            int port = Integer.parseInt(PARAMETERS.get(path).get("port"));
-            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
-            client.post(port, host, "/"+ path)
-                    .sendJsonObject(
-                            new JsonObject()
-                                    .put("greenhouseId", id)
-                                    .put("value", parameters.getValue(p).toString())
-                                    .put("date", formatter.format(new Date())))
-                    .onSuccess(res -> promise.complete())
-                    .onFailure(promise::fail);
-        }
         promise.future();
     }
 

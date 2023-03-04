@@ -6,7 +6,6 @@ import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 import it.unibo.smartgh.plantValue.api.PlantValueAPI;
 import it.unibo.smartgh.plantValue.entity.Modality;
-import it.unibo.smartgh.plantValue.entity.Parameter;
 import it.unibo.smartgh.plantValue.entity.PlantValue;
 import it.unibo.smartgh.plantValue.entity.PlantValueImpl;
 
@@ -28,7 +27,7 @@ public class BrightnessModel implements BrightnessAPI {
         allFutures.add(this.saveData(message));
         allFutures.add(this.performOperation(message));
         CompositeFuture.all(allFutures).onComplete(res -> {
-            System.out.println("Adapters installed.");
+            System.out.println("Data saved.");
             promise.complete();
         });
         return promise.future();
@@ -58,9 +57,13 @@ public class BrightnessModel implements BrightnessAPI {
                                             String action = "LUMINOSITY " + newBrigh;
                                             this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
                                         }
-
+                                        System.out.println("before notify");
                                         this.plantValueModel.notifyClients(id, PARAMETER_NAME, value, status)
-                                                .onSuccess(h -> promise.complete());
+                                                .onSuccess(h -> {
+                                                    System.out.println("notify");
+                                                    promise.complete();
+                                                });
+
                                     });
                         }
                     });

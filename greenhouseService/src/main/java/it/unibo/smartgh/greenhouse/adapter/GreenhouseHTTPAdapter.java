@@ -62,7 +62,6 @@ public class GreenhouseHTTPAdapter extends AbstractAdapter<GreenhouseAPI>{
         try {
             router.get(BASE_PATH).handler(this::handleGetGreenhouse);
             router.put(BASE_PATH).handler(this::handlePutModality);
-            router.post(BASE_PATH).handler(this::handlePostSensorData);
             router.get(GREENHOUSE_ALL).handler(this::handleGetAllGreenhouses);
             router.get(MODALITY_PATH).handler(this::handleGetModality);
             router.get(PARAM_PATH).handler(this::handleGetParamValues);
@@ -84,7 +83,7 @@ public class GreenhouseHTTPAdapter extends AbstractAdapter<GreenhouseAPI>{
 
     }
 
-    private void handlePostSensorData(RoutingContext routingContext) {
+    /*private void handlePostSensorData(RoutingContext routingContext) {
         JsonObject body = routingContext.body().asJsonObject();
         String id = body.getString("id");
         JsonObject parameters = body.getJsonObject("parameters");
@@ -103,7 +102,7 @@ public class GreenhouseHTTPAdapter extends AbstractAdapter<GreenhouseAPI>{
             }
 
         }
-    }
+    }*/
 
     private void handleGetParamValues(RoutingContext routingContext) {
         HttpServerRequest request = routingContext.request();

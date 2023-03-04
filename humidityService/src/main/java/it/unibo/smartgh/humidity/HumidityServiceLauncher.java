@@ -37,7 +37,7 @@ public class HumidityServiceLauncher {
             Vertx vertx = Vertx.vertx();
             PlantValueDatabase database = new PlantValueDatabaseImpl(HUMIDITY_DB_NAME, HUMIDITY_COLLECTION_NAME, mongodbHost, mongodbPort);
             PlantValueController controller = new PlantValueControllerImpl(database);
-            PlantValueModel model = new PlantValueModel(controller);
+            PlantValueModel model = new PlantValueModel(vertx, controller);
             vertx.deployVerticle(new HumidityService(model, host, port));
         } catch (IOException e) {
             throw new RuntimeException(e);

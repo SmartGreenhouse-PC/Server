@@ -27,14 +27,6 @@ public interface GreenhouseAPI {
     Future<Void> putActualModality(String id, Modality modality);
 
     /**
-     * Store the new sensed values, check alarm situation and perform corrective actions.
-     * @param id greenhouse id.
-     * @param parameters the sensed values.
-     * @return the {@link io.vertx.core.Future} representing the operation performed.
-     */
-    Future<Void> insertAndCheckParams(String id, JsonObject parameters);
-
-    /**
      * Gets all the greenhouses id saved.
      * @return a list of the greenhouse id.
      */
