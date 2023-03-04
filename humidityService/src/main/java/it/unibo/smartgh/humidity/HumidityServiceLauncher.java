@@ -1,6 +1,8 @@
 package it.unibo.smartgh.humidity;
 
 import io.vertx.core.Vertx;
+import it.unibo.smartgh.humidity.api.ParameterAPI;
+import it.unibo.smartgh.humidity.api.ParameterModel;
 import it.unibo.smartgh.humidity.service.HumidityService;
 import it.unibo.smartgh.plantValue.api.PlantValueModel;
 import it.unibo.smartgh.plantValue.controller.PlantValueController;
@@ -37,7 +39,8 @@ public class HumidityServiceLauncher {
             Vertx vertx = Vertx.vertx();
             PlantValueDatabase database = new PlantValueDatabaseImpl(HUMIDITY_DB_NAME, HUMIDITY_COLLECTION_NAME, mongodbHost, mongodbPort);
             PlantValueController controller = new PlantValueControllerImpl(database);
-            PlantValueModel model = new PlantValueModel(vertx, controller);
+            PlantValueModel plantValueModel = new PlantValueModel(vertx, controller);
+            ParameterAPI model = new ParameterModel(plantValueModel);
             vertx.deployVerticle(new HumidityService(model, host, port));
         } catch (IOException e) {
             throw new RuntimeException(e);

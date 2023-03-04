@@ -15,13 +15,14 @@ import it.unibo.smartgh.customException.EmptyDatabaseException;
 import it.unibo.smartgh.plantValue.api.PlantValueAPI;
 import it.unibo.smartgh.plantValue.entity.PlantValue;
 import it.unibo.smartgh.plantValue.entity.PlantValueImpl;
+import it.unibo.smartgh.temperature.api.ParameterAPI;
 
 import java.util.List;
 
 /**
  * Class that represents the HTTP adapter of the Temperature.
  */
-public class TemperatureHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
+public class TemperatureHTTPAdapter extends AbstractAdapter<ParameterAPI> {
 
     private static final String BASE_PATH = "/temperature";
     private static final String HISTORY_PATH = BASE_PATH + "/history";
@@ -29,6 +30,7 @@ public class TemperatureHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
 
     private final String host;
     private final int port;
+    private PlantValueAPI plantValueAPI;
 
     /**
      * Constructor of {@link TemperatureHTTPAdapter}.
@@ -37,10 +39,13 @@ public class TemperatureHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
      * @param host the temperature service host
      * @param port the temperature service port
      */
-    public TemperatureHTTPAdapter(PlantValueAPI model, Vertx vertx, String host, int port) {
+    public TemperatureHTTPAdapter(ParameterAPI model, Vertx vertx, String host, int port) {
         super(model, vertx);
         this.host = host;
         this.port = port;
+        this.getModel().getPlantValueAPI().onSuccess(api -> {
+            this.plantValueAPI = api;
+        });
     }
 
     @Override
@@ -83,7 +88,7 @@ public class TemperatureHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
             res.setStatusMessage(BAD_REQUEST_MESSAGE);
             res.end();
         }else {
-            Future<PlantValue> fut = this.getModel().getCurrentValue(greenhouseId);
+            Future<PlantValue> fut = this.plantValueAPI.getCurrentValue(greenhouseId);
             fut.onSuccess(brightnessValue -> res.end(gson.toJson(brightnessValue, PlantValueImpl.class)))
                     .onFailure(exception -> handleFailureInGetMethod(res, exception));
         }
@@ -100,7 +105,7 @@ public class TemperatureHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
             res.end();
         } else {
             res.putHeader("Content-Type", "application/json");
-            Future<List<PlantValue>> fut = this.getModel().getHistory(greenhouseId, Integer.parseInt(limit));
+            Future<List<PlantValue>> fut = this.plantValueAPI.getHistory(greenhouseId, Integer.parseInt(limit));
             fut.onSuccess(list -> res.end(gson.toJson(list)))
                     .onFailure(exception -> handleFailureInGetMethod(res, exception));
         }
@@ -109,10 +114,8 @@ public class TemperatureHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
     private void handlePostTemperatureValue(RoutingContext request) {
         HttpServerResponse response = request.response();
         response.putHeader("content-type", "application/json");
-
         try {
-            PlantValue brightnessValue = gson.fromJson(request.body().asString(), PlantValueImpl.class);
-            Future<Void> fut = this.getModel().postValue(brightnessValue);
+            Future<Void> fut = this.getModel().newDataReceived(request.body().asJsonObject());
 
             fut.onSuccess(res -> {
                 response.setStatusCode(201);

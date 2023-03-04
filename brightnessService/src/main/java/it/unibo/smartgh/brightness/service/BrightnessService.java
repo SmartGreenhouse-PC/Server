@@ -6,7 +6,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import it.unibo.smartgh.adapter.AbstractAdapter;
 import it.unibo.smartgh.brightness.adapter.BrightnessHTTPAdapter;
-import it.unibo.smartgh.brightness.api.BrightnessAPI;
+import it.unibo.smartgh.brightness.api.ParameterAPI;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,7 +17,7 @@ import java.util.List;
 public class BrightnessService extends AbstractVerticle {
 
     private final List<AbstractAdapter> adapters;
-    private final BrightnessAPI model;
+    private final ParameterAPI model;
     private final String host;
     private final int port;
 
@@ -27,7 +27,7 @@ public class BrightnessService extends AbstractVerticle {
      * @param host the brightness service host.
      * @param port the brightness service port.
      */
-    public BrightnessService(BrightnessAPI model, String host, int port) {
+    public BrightnessService(ParameterAPI model, String host, int port) {
         this.adapters = new LinkedList<>();
         this.model = model;
         this.host = host;
@@ -43,7 +43,6 @@ public class BrightnessService extends AbstractVerticle {
     private void installAdapters(Promise<Void> startPromise) {
         ArrayList<Future> allFutures = new ArrayList<Future>();
         allFutures.add(this.installHttpAdapter());
-        //allFutures.add(this.installMQTTAdapter());
         CompositeFuture.all(allFutures).onComplete(res -> {
             System.out.println("Adapters installed.");
             startPromise.complete();

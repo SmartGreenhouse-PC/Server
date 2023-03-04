@@ -12,11 +12,11 @@ import it.unibo.smartgh.plantValue.entity.PlantValueImpl;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class BrightnessModel implements BrightnessAPI {
+public class ParameterModel implements ParameterAPI {
     private static final String PARAMETER_NAME = "brightness";
     private final PlantValueAPI plantValueModel;
 
-    public BrightnessModel(PlantValueAPI plantValueModel) {
+    public ParameterModel(PlantValueAPI plantValueModel) {
         this.plantValueModel = plantValueModel;
     }
 
@@ -39,33 +39,31 @@ public class BrightnessModel implements BrightnessAPI {
             String id = message.getString("id");
             this.plantValueModel.getGreenhouseModality(id)
                     .onSuccess(modality -> {
-                        if (modality.equals(Modality.AUTOMATIC)) {
-                            this.plantValueModel.getParameter(id, PARAMETER_NAME)
-                                    .onSuccess(parameter -> {
-                                        Double min = parameter.getMin();
-                                        Double max = parameter.getMax();
-                                        Double value = message.getDouble("data");
-                                        String status = "normal";
-                                        if (value.compareTo(min) < 0){
-                                            status = "alarm";
+                        this.plantValueModel.getParameter(id, PARAMETER_NAME)
+                                .onSuccess(parameter -> {
+                                    Double min = parameter.getMin();
+                                    Double max = parameter.getMax();
+                                    Double value = message.getDouble("data");
+                                    String status = "normal";
+                                    if (value.compareTo(min) < 0){
+                                        status = "alarm";
+                                        if (modality.equals(Modality.AUTOMATIC)) {
                                             int newBrigh = value.compareTo(255.0) >= 0 ? 255 : value.intValue() + 5;
                                             String action = "LUMINOSITY " + newBrigh;
                                             this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
-                                        }  else if (value.compareTo(max) > 0) {
-                                            status = "alarm";
+                                        }
+                                    }  else if (value.compareTo(max) > 0) {
+                                        status = "alarm";
+                                        if (modality.equals(Modality.AUTOMATIC)) {
                                             int newBrigh = value.compareTo(0.0) <= 0 ? 0 : value.intValue() - 5;
                                             String action = "LUMINOSITY " + newBrigh;
                                             this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
                                         }
-                                        System.out.println("before notify");
-                                        this.plantValueModel.notifyClients(id, PARAMETER_NAME, value, status)
-                                                .onSuccess(h -> {
-                                                    System.out.println("notify");
-                                                    promise.complete();
-                                                });
+                                    }
+                                    this.plantValueModel.notifyClients(id, PARAMETER_NAME, value, status)
+                                            .onSuccess(h -> promise.complete());
 
-                                    });
-                        }
+                                });
                     });
         } catch (Exception e) {
             promise.fail(e);

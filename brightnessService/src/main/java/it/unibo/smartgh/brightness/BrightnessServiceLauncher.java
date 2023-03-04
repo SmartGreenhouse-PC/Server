@@ -1,8 +1,8 @@
 package it.unibo.smartgh.brightness;
 
 import io.vertx.core.Vertx;
-import it.unibo.smartgh.brightness.api.BrightnessAPI;
-import it.unibo.smartgh.brightness.api.BrightnessModel;
+import it.unibo.smartgh.brightness.api.ParameterAPI;
+import it.unibo.smartgh.brightness.api.ParameterModel;
 import it.unibo.smartgh.brightness.service.BrightnessService;
 import it.unibo.smartgh.plantValue.api.PlantValueModel;
 import it.unibo.smartgh.plantValue.controller.PlantValueController;
@@ -40,7 +40,7 @@ public class BrightnessServiceLauncher {
             PlantValueDatabase database = new PlantValueDatabaseImpl(BRIGHTNESS_DB_NAME, BRIGHTNESS_COLLECTION_NAME, mongodbHost, mongodbPort);
             PlantValueController controller = new PlantValueControllerImpl(database);
             PlantValueModel plantValueModel = new PlantValueModel(vertx, controller);
-            BrightnessAPI model = new BrightnessModel(plantValueModel);
+            ParameterAPI model = new ParameterModel(plantValueModel);
             vertx.deployVerticle(new BrightnessService(model, host, port));
         } catch (IOException e) {
             throw new RuntimeException(e);

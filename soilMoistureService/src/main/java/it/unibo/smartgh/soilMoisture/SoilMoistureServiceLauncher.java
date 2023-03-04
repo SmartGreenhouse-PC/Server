@@ -6,6 +6,8 @@ import it.unibo.smartgh.plantValue.controller.PlantValueController;
 import it.unibo.smartgh.plantValue.controller.PlantValueControllerImpl;
 import it.unibo.smartgh.plantValue.persistence.PlantValueDatabase;
 import it.unibo.smartgh.plantValue.persistence.PlantValueDatabaseImpl;
+import it.unibo.smartgh.soilMoisture.api.ParameterAPI;
+import it.unibo.smartgh.soilMoisture.api.ParameterModel;
 import it.unibo.smartgh.soilMoisture.service.SoilMoistureService;
 
 import java.io.IOException;
@@ -36,7 +38,8 @@ public class SoilMoistureServiceLauncher {
             Vertx vertx = Vertx.vertx();
             PlantValueDatabase database = new PlantValueDatabaseImpl(SOIL_MOISTURE_DB_NAME, SOIL_MOISTURE_COLLECTION_NAME, mongodbHost, mongodbPort);
             PlantValueController controller = new PlantValueControllerImpl(database);
-            PlantValueModel model = new PlantValueModel(vertx, controller);
+            PlantValueModel plantValueModel = new PlantValueModel(vertx, controller);
+            ParameterAPI model = new ParameterModel(plantValueModel);
             vertx.deployVerticle(new SoilMoistureService(model, host, port));
         } catch (IOException e) {
             throw new RuntimeException(e);

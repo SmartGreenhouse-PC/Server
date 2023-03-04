@@ -6,6 +6,8 @@ import it.unibo.smartgh.plantValue.controller.PlantValueController;
 import it.unibo.smartgh.plantValue.controller.PlantValueControllerImpl;
 import it.unibo.smartgh.plantValue.persistence.PlantValueDatabase;
 import it.unibo.smartgh.plantValue.persistence.PlantValueDatabaseImpl;
+import it.unibo.smartgh.temperature.api.ParameterAPI;
+import it.unibo.smartgh.temperature.api.ParameterModel;
 import it.unibo.smartgh.temperature.service.TemperatureService;
 
 import java.io.IOException;
@@ -36,7 +38,8 @@ public class TemperatureServiceLauncher {
             Vertx vertx = Vertx.vertx();
             PlantValueDatabase database = new PlantValueDatabaseImpl(TEMPERATURE_DB_NAME, TEMPERATURE_COLLECTION_NAME, mongodbHost, mongodbPort);
             PlantValueController controller = new PlantValueControllerImpl(database);
-            PlantValueModel model = new PlantValueModel(vertx, controller);
+            PlantValueModel plantValueAPI = new PlantValueModel(vertx, controller);
+            ParameterAPI model = new ParameterModel(plantValueAPI);
             vertx.deployVerticle(new TemperatureService(model, host, port));
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -7,6 +7,8 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import it.unibo.smartgh.humidity.api.ParameterAPI;
+import it.unibo.smartgh.humidity.api.ParameterModel;
 import it.unibo.smartgh.humidity.service.HumidityService;
 import it.unibo.smartgh.plantValue.api.PlantValueAPI;
 import it.unibo.smartgh.plantValue.api.PlantValueModel;
@@ -70,7 +72,8 @@ public class HumidityHTTPAdapterTest {
             throw new RuntimeException(e);
         }
         PlantValueController controller = new PlantValueControllerImpl(database);
-        PlantValueAPI model = new PlantValueModel(controller);
+        PlantValueModel plantValueModel = new PlantValueModel(vertx, controller);
+        ParameterAPI model = new ParameterModel(plantValueModel);
         HumidityService service = new HumidityService(model, SERVICE_HOST, SERVICE_PORT);
         vertx.deployVerticle(service, testContext.succeedingThenComplete());
         try {
@@ -130,27 +133,5 @@ public class HumidityHTTPAdapterTest {
                     });
                     testContext.completeNow();
                 })));
-    }
-
-    @Test
-    public void testPostNewValue(Vertx vertx, VertxTestContext testContext){
-        WebClient client = WebClient.create(vertx);
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
-        Double value = 30.0;
-        int expectedStatusCode = 201;
-        try {
-            Date date = formatter.parse(formatter.format(Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC))));
-            PlantValue plantValue = new PlantValueImpl(greenhouseId, date, value);
-            String operationPath = "/humidity";
-            client.post(SERVICE_PORT, SERVICE_HOST, operationPath)
-                    .putHeader("content-type", "application/json")
-                    .sendBuffer(Buffer.buffer(gson.toJson(plantValue)), testContext.succeeding(res -> testContext.verify(() -> {
-                        assertEquals(expectedStatusCode, res.statusCode());
-                        testContext.completeNow();
-                    })));
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 }
