@@ -80,7 +80,6 @@ public class BrightnessHTTPAdapter extends AbstractAdapter<BrightnessAPI> {
         HttpServerResponse res = ctx.response();
         res.putHeader("Content-Type", "application/json");
         String greenhouseId = request.getParam("id");
-        System.out.println("Request arrived");
         if(greenhouseId == null){
             res.setStatusCode(409);
             res.setStatusMessage(BAD_REQUEST_MESSAGE);

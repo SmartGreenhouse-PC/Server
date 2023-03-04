@@ -36,7 +36,7 @@ public class SoilMoistureServiceLauncher {
             Vertx vertx = Vertx.vertx();
             PlantValueDatabase database = new PlantValueDatabaseImpl(SOIL_MOISTURE_DB_NAME, SOIL_MOISTURE_COLLECTION_NAME, mongodbHost, mongodbPort);
             PlantValueController controller = new PlantValueControllerImpl(database);
-            PlantValueModel model = new PlantValueModel(controller);
+            PlantValueModel model = new PlantValueModel(vertx, controller);
             vertx.deployVerticle(new SoilMoistureService(model, host, port));
         } catch (IOException e) {
             throw new RuntimeException(e);

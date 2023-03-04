@@ -9,6 +9,8 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import it.unibo.smartgh.brightness.api.BrightnessAPI;
+import it.unibo.smartgh.brightness.api.BrightnessModel;
 import it.unibo.smartgh.brightness.service.BrightnessService;
 import it.unibo.smartgh.clientCommunication.api.ClientCommunicationAPI;
 import it.unibo.smartgh.clientCommunication.api.ClientCommunicationModel;
@@ -83,8 +85,9 @@ public class ParameterClientCommunicationHTTPAdapterTest {
         configVariable();
         PlantValueDatabase database = new PlantValueDatabaseImpl(BRIGHTNESS_DB_NAME, BRIGHTNESS_COLLECTION_NAME, MONGODB_HOST, MONGODB_PORT);
         PlantValueController controller = new PlantValueControllerImpl(database);
-        PlantValueModel model = new PlantValueModel(vertx, controller);
-        //vertx.deployVerticle(new BrightnessService(model, BRIGHTNESS_SERVICE_HOST, BRIGHTNESS_SERVICE_PORT)); TODO
+        PlantValueModel plantValueModel = new PlantValueModel(vertx, controller);
+        BrightnessAPI model = new BrightnessModel(plantValueModel);
+        vertx.deployVerticle(new BrightnessService(model, BRIGHTNESS_SERVICE_HOST, BRIGHTNESS_SERVICE_PORT));
         System.out.println("Brightness service ready");
         System.out.println("Client Communication service initializing");
         ClientCommunicationAPI clientCommunicationModel = new ClientCommunicationModel(vertx);

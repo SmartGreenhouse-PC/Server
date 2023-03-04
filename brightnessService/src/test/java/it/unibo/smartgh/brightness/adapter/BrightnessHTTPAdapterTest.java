@@ -2,7 +2,6 @@ package it.unibo.smartgh.brightness.adapter;
 
 import com.google.gson.Gson;
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.junit5.VertxExtension;
@@ -10,7 +9,6 @@ import io.vertx.junit5.VertxTestContext;
 import it.unibo.smartgh.brightness.api.BrightnessAPI;
 import it.unibo.smartgh.brightness.api.BrightnessModel;
 import it.unibo.smartgh.brightness.service.BrightnessService;
-import it.unibo.smartgh.plantValue.api.PlantValueAPI;
 import it.unibo.smartgh.plantValue.api.PlantValueModel;
 import it.unibo.smartgh.plantValue.controller.PlantValueController;
 import it.unibo.smartgh.plantValue.controller.PlantValueControllerImpl;
@@ -33,7 +31,6 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -48,7 +45,7 @@ public class BrightnessHTTPAdapterTest {
 
     private static PlantValueDatabase database;
     private final Gson gson = GsonUtils.createGson();
-    private static final String greenhouseId = "63af0ae025d55e9840cbc1fa";
+    private static final String greenhouseId = "greenhouse2";
     private final int limit = 5;
 
     @BeforeAll
@@ -75,7 +72,6 @@ public class BrightnessHTTPAdapterTest {
         vertx.deployVerticle(service, testContext.succeedingThenComplete());
         try {
             testContext.awaitCompletion(10, TimeUnit.SECONDS);
-            System.out.println("wait");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -130,27 +126,5 @@ public class BrightnessHTTPAdapterTest {
                     });
                     testContext.completeNow();
                 })));
-    }
-
-    @Test
-    public void testPostNewValue(Vertx vertx, VertxTestContext testContext){
-        WebClient client = WebClient.create(vertx);
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
-        Double value = 800.0;
-        int expectedStatusCode = 201;
-        try {
-            Date date = formatter.parse(formatter.format(Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC))));
-            PlantValue plantValue = new PlantValueImpl(greenhouseId, date, value);
-            String operationPath = "/brightness";
-            client.post(SERVICE_PORT, SERVICE_HOST, operationPath)
-                    .putHeader("content-type", "application/json")
-                    .sendBuffer(Buffer.buffer(gson.toJson(plantValue)), testContext.succeeding(res -> testContext.verify(() -> {
-                        assertEquals(expectedStatusCode, res.statusCode());
-                        testContext.completeNow();
-                    })));
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 }

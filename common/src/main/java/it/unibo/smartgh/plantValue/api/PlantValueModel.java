@@ -97,24 +97,22 @@ public class PlantValueModel implements PlantValueAPI {
 
     @Override
     public Future<Void> performAction(String ghId, String parameter, String action, String modality){
-        System.out.println("inside");
         Promise<Void> promise = Promise.promise();
-        try{
-            WebClient client = WebClient.create(vertx);
-            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
-            client.post(OPERATION_PORT, OPERATION_HOST, "/operations")
-                    .sendJsonObject(
-                            new JsonObject()
-                                    .put("greenhouseId", ghId)
-                                    .put("modality", modality)
-                                    .put("date", formatter.format(new Date()))
-                                    .put("parameter", parameter)
-                                    .put("action", action)
-                    ).onSuccess(res -> promise.complete())
-                    .onFailure(System.out::println);
-        } catch (Exception e) {
-            promise.fail(e);
-        }
+        WebClient client = WebClient.create(vertx);
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
+        client.post(OPERATION_PORT, OPERATION_HOST, "/operations")
+                .sendJsonObject(
+                        new JsonObject()
+                                .put("greenhouseId", ghId)
+                                .put("modality", modality)
+                                .put("date", formatter.format(new Date()))
+                                .put("parameter", parameter)
+                                .put("action", action)
+                ).onSuccess(res -> {
+                    System.out.println("action performed");
+                            promise.complete();
+                        })
+                .onFailure(promise::fail);
         return promise.future();
     }
 
@@ -151,7 +149,8 @@ public class PlantValueModel implements PlantValueAPI {
                     .send()
                     .onSuccess(res -> {
                         promise.complete(Modality.valueOf(res.body().getString("modality")));
-                    });
+                    })
+                    .onFailure(System.out::println);
         } catch (Exception e) {
             promise.fail(e);
         }
