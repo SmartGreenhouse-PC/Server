@@ -6,8 +6,8 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import it.unibo.smartgh.brightness.api.BrightnessAPI;
-import it.unibo.smartgh.brightness.api.BrightnessModel;
+import it.unibo.smartgh.brightness.api.ParameterAPI;
+import it.unibo.smartgh.brightness.api.ParameterModel;
 import it.unibo.smartgh.brightness.service.BrightnessService;
 import it.unibo.smartgh.plantValue.api.PlantValueModel;
 import it.unibo.smartgh.plantValue.controller.PlantValueController;
@@ -67,7 +67,7 @@ public class BrightnessHTTPAdapterTest {
             throw new RuntimeException(e);
         }
         PlantValueController controller = new PlantValueControllerImpl(database);
-        BrightnessAPI model = new BrightnessModel(new PlantValueModel(vertx, controller));
+        ParameterAPI model = new ParameterModel(new PlantValueModel(vertx, controller));
         BrightnessService service = new BrightnessService(model, SERVICE_HOST, SERVICE_PORT);
         vertx.deployVerticle(service, testContext.succeedingThenComplete());
         try {

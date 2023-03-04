@@ -12,6 +12,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import it.unibo.smartgh.adapter.AbstractAdapter;
 import it.unibo.smartgh.customException.EmptyDatabaseException;
+import it.unibo.smartgh.humidity.api.ParameterAPI;
 import it.unibo.smartgh.plantValue.api.PlantValueAPI;
 import it.unibo.smartgh.plantValue.entity.PlantValue;
 import it.unibo.smartgh.plantValue.entity.PlantValueImpl;
@@ -20,7 +21,7 @@ import java.util.List;
 /**
  * Class that represents the HTTP adapter of the Humidity.
  */
-public class HumidityHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
+public class HumidityHTTPAdapter extends AbstractAdapter<ParameterAPI> {
 
     private static final String BASE_PATH = "/humidity";
     private static final String HISTORY_PATH = BASE_PATH + "/history";
@@ -28,6 +29,7 @@ public class HumidityHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
 
     private final String host;
     private final int port;
+    private PlantValueAPI plantValueAPI;
     /**
      * Constructor of {@link HumidityHTTPAdapter}.
      * @param model the humidity API model.
@@ -35,10 +37,13 @@ public class HumidityHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
      * @param host the humidity service host
      * @param port the humidity service port
      */
-    public HumidityHTTPAdapter(PlantValueAPI model, Vertx vertx, String host, int port) {
+    public HumidityHTTPAdapter(ParameterAPI model, Vertx vertx, String host, int port) {
         super(model, vertx);
         this.host = host;
         this.port = port;
+        this.getModel().getPlantValueAPI().onSuccess(api -> {
+            this.plantValueAPI = api;
+        });
     }
 
     @Override
@@ -80,7 +85,7 @@ public class HumidityHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
             res.setStatusMessage(BAD_REQUEST_MESSAGE);
             res.end();
         }else {
-            Future<PlantValue> fut = this.getModel().getCurrentValue(greenhouseId);
+            Future<PlantValue> fut = this.plantValueAPI.getCurrentValue(greenhouseId);
             fut.onSuccess(brightnessValue -> res.end(gson.toJson(brightnessValue, PlantValueImpl.class)))
                     .onFailure(exception -> handleFailureInGetMethod(res, exception));
         }
@@ -97,7 +102,7 @@ public class HumidityHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
             res.end();
         } else {
             res.putHeader("Content-Type", "application/json");
-            Future<List<PlantValue>> fut = this.getModel().getHistory(greenhouseId, Integer.parseInt(limit));
+            Future<List<PlantValue>> fut = this.plantValueAPI.getHistory(greenhouseId, Integer.parseInt(limit));
             fut.onSuccess(list -> res.end(gson.toJson(list)))
                     .onFailure(exception -> handleFailureInGetMethod(res, exception));
         }
@@ -106,10 +111,8 @@ public class HumidityHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
     private void handlePostHumidityValue(RoutingContext request) {
         HttpServerResponse response = request.response();
         response.putHeader("content-type", "application/json");
-
         try {
-            PlantValue humidityValue = gson.fromJson(request.body().asString(), PlantValueImpl.class);
-            Future<Void> fut = this.getModel().postValue(humidityValue);
+            Future<Void> fut = this.getModel().newDataReceived(request.body().asJsonObject());
 
             fut.onSuccess(res -> {
                 response.setStatusCode(201);
@@ -120,9 +123,9 @@ public class HumidityHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
                 response.end();
             });
         } catch (JsonParseException e) {
-             response.setStatusCode(400);
-             response.setStatusMessage(BAD_REQUEST_MESSAGE);
-             response.end();
+            response.setStatusCode(400);
+            response.setStatusMessage(BAD_REQUEST_MESSAGE);
+            response.end();
         }
     }
 

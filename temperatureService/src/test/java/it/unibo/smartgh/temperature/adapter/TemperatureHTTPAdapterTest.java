@@ -16,6 +16,8 @@ import it.unibo.smartgh.plantValue.entity.PlantValueImpl;
 import it.unibo.smartgh.plantValue.persistence.PlantValueDatabase;
 import it.unibo.smartgh.plantValue.persistence.PlantValueDatabaseImpl;
 import it.unibo.smartgh.presentation.GsonUtils;
+import it.unibo.smartgh.temperature.api.ParameterAPI;
+import it.unibo.smartgh.temperature.api.ParameterModel;
 import it.unibo.smartgh.temperature.service.TemperatureService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -69,7 +71,8 @@ public class TemperatureHTTPAdapterTest {
             throw new RuntimeException(e);
         }
         PlantValueController controller = new PlantValueControllerImpl(database);
-        PlantValueAPI model = new PlantValueModel(controller);
+        PlantValueAPI plantValueAPI = new PlantValueModel(vertx, controller);
+        ParameterAPI model = new ParameterModel(plantValueAPI);
         TemperatureService service = new TemperatureService(model, SERVICE_HOST, SERVICE_PORT);
         vertx.deployVerticle(service, testContext.succeedingThenComplete());
         try {
@@ -129,28 +132,6 @@ public class TemperatureHTTPAdapterTest {
                     });
                     testContext.completeNow();
                 })));
-    }
-
-    @Test
-    public void testPostNewValue(Vertx vertx, VertxTestContext testContext){
-        WebClient client = WebClient.create(vertx);
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
-        Double value = 25.0;
-        int expectedStatusCode = 201;
-        try {
-            Date date = formatter.parse(formatter.format(Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC))));
-            PlantValue plantValue = new PlantValueImpl(greenhouseId, date, value);
-            String operationPath = "/temperature";
-            client.post(SERVICE_PORT, SERVICE_HOST, operationPath)
-                    .putHeader("content-type", "application/json")
-                    .sendBuffer(Buffer.buffer(gson.toJson(plantValue)), testContext.succeeding(res -> testContext.verify(() -> {
-                        assertEquals(expectedStatusCode, res.statusCode());
-                        testContext.completeNow();
-                    })));
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 }
 

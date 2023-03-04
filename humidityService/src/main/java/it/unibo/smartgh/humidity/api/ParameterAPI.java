@@ -1,10 +1,10 @@
-package it.unibo.smartgh.brightness.api;
+package it.unibo.smartgh.humidity.api;
 
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import it.unibo.smartgh.plantValue.api.PlantValueAPI;
 
-public interface BrightnessAPI {
+public interface ParameterAPI {
     /**
      * Handler for the new data incoming.
      * @param message data received

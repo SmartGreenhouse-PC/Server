@@ -15,13 +15,14 @@ import it.unibo.smartgh.customException.EmptyDatabaseException;
 import it.unibo.smartgh.plantValue.api.PlantValueAPI;
 import it.unibo.smartgh.plantValue.entity.PlantValue;
 import it.unibo.smartgh.plantValue.entity.PlantValueImpl;
+import it.unibo.smartgh.soilMoisture.api.ParameterAPI;
 
 import java.util.List;
 
 /**
  * Class that represents the HTTP adapter of the Soil Moisture Service.
  */
-public class SoilMoistureHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
+public class SoilMoistureHTTPAdapter extends AbstractAdapter<ParameterAPI> {
 
     private static final String BASE_PATH = "/soilMoisture";
     private static final String HISTORY_PATH = BASE_PATH + "/history";
@@ -29,6 +30,7 @@ public class SoilMoistureHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
 
     private final String host;
     private final int port;
+    private PlantValueAPI plantValueAPI;
     /**
      * Constructor of {@link SoilMoistureHTTPAdapter}.
      * @param model the soil moisture API model.
@@ -36,10 +38,13 @@ public class SoilMoistureHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
      * @param host the soil moisture service host
      * @param port the soil moisture service port
      */
-    public SoilMoistureHTTPAdapter(PlantValueAPI model, Vertx vertx, String host, int port) {
+    public SoilMoistureHTTPAdapter(ParameterAPI model, Vertx vertx, String host, int port) {
         super(model, vertx);
         this.host = host;
         this.port = port;
+        this.getModel().getPlantValueAPI().onSuccess(api -> {
+            this.plantValueAPI = api;
+        });
     }
 
     @Override
@@ -81,7 +86,7 @@ public class SoilMoistureHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
             res.setStatusMessage(BAD_REQUEST_MESSAGE);
             res.end();
         }else {
-            Future<PlantValue> fut = this.getModel().getCurrentValue(greenhouseId);
+            Future<PlantValue> fut = this.plantValueAPI.getCurrentValue(greenhouseId);
             fut.onSuccess(brightnessValue -> res.end(gson.toJson(brightnessValue, PlantValueImpl.class)))
                     .onFailure(exception -> handleFailureInGetMethod(res, exception));
         }
@@ -98,7 +103,7 @@ public class SoilMoistureHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
             res.end();
         } else {
             res.putHeader("Content-Type", "application/json");
-            Future<List<PlantValue>> fut = this.getModel().getHistory(greenhouseId, Integer.parseInt(limit));
+            Future<List<PlantValue>> fut = this.plantValueAPI.getHistory(greenhouseId, Integer.parseInt(limit));
             fut.onSuccess(list -> res.end(gson.toJson(list)))
                     .onFailure(exception -> handleFailureInGetMethod(res, exception));
         }
@@ -107,10 +112,8 @@ public class SoilMoistureHTTPAdapter extends AbstractAdapter<PlantValueAPI> {
     private void handlePostSoilMoistureValue(RoutingContext request) {
         HttpServerResponse response = request.response();
         response.putHeader("content-type", "application/json");
-
         try {
-            PlantValue soilMoistureValue = gson.fromJson(request.body().asString(), PlantValueImpl.class);
-            Future<Void> fut = this.getModel().postValue(soilMoistureValue);
+            Future<Void> fut = this.getModel().newDataReceived(request.body().asJsonObject());
 
             fut.onSuccess(res -> {
                 response.setStatusCode(201);

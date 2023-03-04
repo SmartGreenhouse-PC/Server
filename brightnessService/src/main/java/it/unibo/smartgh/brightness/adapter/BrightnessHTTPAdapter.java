@@ -11,7 +11,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import it.unibo.smartgh.adapter.AbstractAdapter;
-import it.unibo.smartgh.brightness.api.BrightnessAPI;
+import it.unibo.smartgh.brightness.api.ParameterAPI;
 import it.unibo.smartgh.customException.EmptyDatabaseException;
 import it.unibo.smartgh.plantValue.api.PlantValueAPI;
 import it.unibo.smartgh.plantValue.entity.PlantValue;
@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Class that represents the HTTP adapter of the Brightness.
  */
-public class BrightnessHTTPAdapter extends AbstractAdapter<BrightnessAPI> {
+public class BrightnessHTTPAdapter extends AbstractAdapter<ParameterAPI> {
 
     private static final String BASE_PATH = "/brightness";
     private static final String HISTORY_PATH = BASE_PATH + "/history";
@@ -37,7 +37,7 @@ public class BrightnessHTTPAdapter extends AbstractAdapter<BrightnessAPI> {
      * @param host the brightness service host
      * @param port the brightness service port
      */
-    public BrightnessHTTPAdapter(BrightnessAPI model, Vertx vertx, String host, int port) {
+    public BrightnessHTTPAdapter(ParameterAPI model, Vertx vertx, String host, int port) {
         super(model, vertx);
         this.host = host;
         this.port = port;
