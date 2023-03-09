@@ -123,7 +123,7 @@ public class GreenhouseCommunicationMQTTModel implements GreenhouseCommunication
             Properties properties = new Properties();
             properties.load(is);
             String parameterName = ParameterType
-                    .parameterOfParameterTopic(newGreenhouseData.getString("topic"))
+                    .parameterOfParameterTopic(newGreenhouseData.getString("param"))
                     .get().getName();
 
             String host = properties.getProperty(parameterName + ".host");
