@@ -43,7 +43,7 @@ public class ParameterModel implements ParameterAPI {
                                     .onSuccess(parameter -> {
                                         Double min = parameter.getMin();
                                         Double max = parameter.getMax();
-                                        Double value = message.getDouble("data");
+                                        Double value = message.getDouble("value");
                                         String status = "normal";
                                         if (value.compareTo(min) < 0){
                                             status = "alarm";
@@ -69,7 +69,7 @@ public class ParameterModel implements ParameterAPI {
         return promise.future();
     }
     private Future<Void> saveData(JsonObject message) {
-        PlantValue value = new PlantValueImpl(message.getString("id"), new Date(), message.getDouble("data"));
+        PlantValue value = new PlantValueImpl(message.getString("id"), new Date(), message.getDouble("value"));
         return this.plantValueModel.postValue(value);
     }
 
