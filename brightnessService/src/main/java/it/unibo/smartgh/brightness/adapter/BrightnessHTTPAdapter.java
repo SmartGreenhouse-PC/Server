@@ -26,9 +26,7 @@ public class BrightnessHTTPAdapter extends AbstractAdapter<ParameterAPI> {
 
     private static final String BASE_PATH = "/brightness";
     private static final String HISTORY_PATH = BASE_PATH + "/history";
-
     private static final String THING_DESCRIPTION_PATH = BASE_PATH + "/thing-description";
-
     private static final String BAD_REQUEST_MESSAGE = "Bad request: some field is missing or invalid in the provided data.";
 
     private final String host;

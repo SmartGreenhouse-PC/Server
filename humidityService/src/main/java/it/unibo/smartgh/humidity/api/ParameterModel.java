@@ -4,21 +4,48 @@ import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
+import it.unibo.smartgh.humidity.HumidityServiceLauncher;
 import it.unibo.smartgh.plantValue.api.PlantValueAPI;
 import it.unibo.smartgh.plantValue.entity.Modality;
 import it.unibo.smartgh.plantValue.entity.PlantValue;
 import it.unibo.smartgh.plantValue.entity.PlantValueImpl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Properties;
 
 public class ParameterModel implements ParameterAPI {
     private static final String PARAMETER_NAME = "humidity";
     private static final String TOPIC = "VENTILATION";
     private final PlantValueAPI plantValueModel;
 
+    private final JsonObject thingDescription;
+
     public ParameterModel(PlantValueAPI plantValueModel) {
         this.plantValueModel = plantValueModel;
+        this.thingDescription = new JsonObject();
+
+        this.initializeThingDescription();
+    }
+
+    private void initializeThingDescription() {
+        InputStream is = HumidityServiceLauncher.class.getResourceAsStream("/config.properties");
+        Properties properties = new Properties();
+        try {
+            properties.load(is);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        String host = properties.getProperty(PARAMETER_NAME + ".host");
+        int port = Integer.parseInt(properties.getProperty(PARAMETER_NAME + ".port"));
+
+        thingDescription.put("@context", "https://webthings.io/schemas/");
+        thingDescription.put("id", "http://"+ host + ":" + port +"/"+ PARAMETER_NAME);
+        thingDescription.put("title", PARAMETER_NAME);
+        thingDescription.put("description", "web connected system to handle the humidity of a greenhouse.");
     }
 
     @Override
@@ -86,6 +113,11 @@ public class ParameterModel implements ParameterAPI {
         Promise<PlantValueAPI> promise = Promise.promise();
         promise.complete(this.plantValueModel);
         return promise.future();
+    }
+
+    @Override
+    public Future<JsonObject> getThingDescription() {
+        return null;
     }
 
     private void sendOperation(String id, String action) {

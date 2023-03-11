@@ -7,6 +7,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -25,6 +26,7 @@ public class HumidityHTTPAdapter extends AbstractAdapter<ParameterAPI> {
 
     private static final String BASE_PATH = "/humidity";
     private static final String HISTORY_PATH = BASE_PATH + "/history";
+    private static final String THING_DESCRIPTION_PATH = BASE_PATH + "/thing-description";
     private static final String BAD_REQUEST_MESSAGE = "Bad request: some field is missing or invalid in the provided data.";
 
     private final String host;
@@ -55,6 +57,7 @@ public class HumidityHTTPAdapter extends AbstractAdapter<ParameterAPI> {
 
             router.get(BASE_PATH).handler(this::handleGetHumidityCurrentValue);
             router.get(HISTORY_PATH).handler(this::handleGetHumidityHistoryData);
+            router.get(THING_DESCRIPTION_PATH).handler(this::handleGetThingDescription);
 
             router.post(BASE_PATH).handler(this::handlePostHumidityValue);
 
@@ -73,6 +76,91 @@ public class HumidityHTTPAdapter extends AbstractAdapter<ParameterAPI> {
             System.out.println("API setup failed - " + ex);
             startPromise.fail("API setup failed - " + ex);
         }
+    }
+
+    private void handleGetThingDescription(RoutingContext ctx) {
+        HttpServerResponse res = ctx.response();
+        res.putHeader("Content-Type", "application/json");
+
+        Future<io.vertx.core.json.JsonObject> thingDescription = this.getModel().getThingDescription();
+        thingDescription.onSuccess(des -> {
+
+            des.put("properties", this.getThingProperties());
+            des.put("actions", this.getThingActions());
+            des.put("events", this.getThingEvents());
+
+            res.end(des.toBuffer());
+        });
+    }
+
+    private JsonObject getThingEvents() {
+        JsonObject events = new JsonObject();
+
+        events.put("newData", new JsonObject()
+                .put("title", "new data")
+                .put("type", "string")
+                .put("description", "new humidity data.")
+                .put("unit", "lux")
+                .put("links", new io.vertx.core.json.JsonArray()
+                        .add(new JsonObject()
+                                .put("href", "mqtt://broker.mqtt-dashboard.com:1883")
+                                .put("mqv:topic", "dataSG"))));
+        return events;
+    }
+
+    private JsonObject getThingActions() {
+        JsonObject actions = new JsonObject();
+
+        actions.put("fade", new JsonObject()
+                .put("@type", "ToggleAction")
+                .put("title", "toggle")
+                .put("description", "turn on or off the humidity system.")
+                .put("input", new JsonObject()
+                        .put("type", "string")
+                )
+                .put("links", new io.vertx.core.json.JsonArray()
+                        .add(new JsonObject()
+                                .put("href", "mqtt://broker.mqtt-dashboard.com:1883")
+                                .put("op", new JsonObject()
+                                        .put("action", new JsonObject()
+                                                .put("type", "string")
+                                                .put("enable", "on")
+                                                .put("disable", "off")))
+                                .put("mqv:topic", "HUMIDITY"))));
+        return actions;
+    }
+
+    private JsonObject getThingProperties() {
+        JsonObject properties = new JsonObject();
+
+        properties.put("value", new JsonObject()
+                        .put("title", "current value")
+                        .put("description", "the level of the humidity registered.")
+                        .put("type", "object")
+                        .put("properties", new JsonObject()
+                                .put("greenhouseId", new JsonObject()
+                                        .put("type", "string"))
+                                .put("date", new JsonObject()
+                                        .put("type", "date"))
+                                .put("value", new JsonObject()
+                                        .put("type", "float"))))
+                .put("links", new io.vertx.core.json.JsonArray()
+                        .add(new JsonObject().put("href", BASE_PATH + "?id=")));
+
+        properties.put("history", new JsonObject()
+                        .put("title", "history values")
+                        .put("description", "the history value of the humidity registered.")
+                        .put("type", "list")
+                        .put("properties", new JsonObject()
+                                .put("greenhouseId", new JsonObject()
+                                        .put("type", "string"))
+                                .put("date", new JsonObject()
+                                        .put("type", "date"))
+                                .put("value", new JsonObject()
+                                        .put("type", "float"))))
+                .put("links", new io.vertx.core.json.JsonArray()
+                        .add(new JsonObject().put("href", HISTORY_PATH + "?id=&limit=")));
+        return properties;
     }
 
     private void handleGetHumidityCurrentValue(RoutingContext ctx) {
