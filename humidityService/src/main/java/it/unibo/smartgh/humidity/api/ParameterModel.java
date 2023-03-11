@@ -45,17 +45,28 @@ public class ParameterModel implements ParameterAPI {
                                         Double max = parameter.getMax();
                                         Double value = message.getDouble("value");
                                         String status = "normal";
+                                        Future<String> lastOperation = this.plantValueModel.getLastOperation(id, PARAMETER_NAME);
                                         if (value.compareTo(max) > 0){
                                             status = "alarm";
                                             if (modality.equals(Modality.AUTOMATIC)) {
-                                                String action = "VENTILATION on";
-                                                this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
+                                                lastOperation.onSuccess(res -> {
+                                                   if(!res.split(" ")[1].equals("on")){
+                                                       this.sendOperation(id, "VENTILATION on");
+                                                   }
+                                                }).onFailure(err -> {
+                                                    this.sendOperation(id,"VENTILATION on");
+                                                });
                                             }
                                         } else {
                                             if (value.compareTo(min) < 0) status = "alarm";
                                             if (modality.equals(Modality.AUTOMATIC)) {
-                                                String action = "VENTILATION off";
-                                                this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
+                                                lastOperation.onSuccess(res -> {
+                                                    if(!res.split(" ")[1].equals("off")){
+                                                        this.sendOperation(id, "VENTILATION off");
+                                                    }
+                                                }).onFailure(err -> {
+                                                    this.sendOperation(id,"VENTILATION off");
+                                                });
                                             }
                                         }
                                         this.plantValueModel.notifyClients(id, PARAMETER_NAME, value, status)
@@ -68,15 +79,20 @@ public class ParameterModel implements ParameterAPI {
         }
         return promise.future();
     }
-    private Future<Void> saveData(JsonObject message) {
-        PlantValue value = new PlantValueImpl(message.getString("id"), new Date(), message.getDouble("value"));
-        return this.plantValueModel.postValue(value);
-    }
 
     @Override
     public Future<PlantValueAPI> getPlantValueAPI() {
         Promise<PlantValueAPI> promise = Promise.promise();
         promise.complete(this.plantValueModel);
         return promise.future();
+    }
+
+    private void sendOperation(String id, String action) {
+        this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
+    }
+
+    private Future<Void> saveData(JsonObject message) {
+        PlantValue value = new PlantValueImpl(message.getString("id"), new Date(), message.getDouble("value"));
+        return this.plantValueModel.postValue(value);
     }
 }

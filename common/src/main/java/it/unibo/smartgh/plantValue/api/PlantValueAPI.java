@@ -70,4 +70,6 @@ public interface PlantValueAPI {
      * @return the future representing the notification to client.
      */
     Future<Void> notifyClients(String id, String parameter, Double value, String status);
+
+    Future<String> getLastOperation(String id, String parameter);
 }

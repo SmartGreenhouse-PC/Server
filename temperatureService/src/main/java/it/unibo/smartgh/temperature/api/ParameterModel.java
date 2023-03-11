@@ -45,23 +45,39 @@ public class ParameterModel implements ParameterAPI {
                                     Double max = parameter.getMax();
                                     Double value = message.getDouble("value");
                                     String status = "normal";
+                                    Future<String> lastOperation = this.plantValueModel.getLastOperation(id, PARAMETER_NAME);
                                     if (value.compareTo(min) < 0){
                                         status = "alarm";
                                         if (modality.equals(Modality.AUTOMATIC)) {
-                                            String action = "TEMPERATURE increase";
-                                            this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
+                                            lastOperation.onSuccess(res -> {
+                                                if(!res.split(" ")[1].equals("increase")){
+                                                    this.sendOperation(id, "TEMPERATURE increase");
+                                                }
+                                            }).onFailure(err -> {
+                                                this.sendOperation(id,"TEMPERATURE increase");
+                                            });
                                         }
                                     } else if (value.compareTo(max) > 0) {
                                         status = "alarm";
                                         if (modality.equals(Modality.AUTOMATIC)) {
-                                            String action = "TEMPERATURE decrease";
-                                            this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
+                                            lastOperation.onSuccess(res -> {
+                                                if(!res.split(" ")[1].equals("decrease")){
+                                                    this.sendOperation(id, "TEMPERATURE decrease");
+                                                }
+                                            }).onFailure(err -> {
+                                                this.sendOperation(id,"TEMPERATURE decrease");
+                                            });
                                         }
                                     } else {
                                         if (value.compareTo(min + 5.0) >= 0 || value.compareTo(max - 5.0) <= 0) {
                                             if(modality.equals(Modality.AUTOMATIC)) {
-                                                String action = "TEMPERATURE turn-off";
-                                                this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
+                                                lastOperation.onSuccess(res -> {
+                                                    if(!res.split(" ")[1].equals("turn-off")){
+                                                        this.sendOperation(id, "TEMPERATURE turn-off");
+                                                    }
+                                                }).onFailure(err -> {
+                                                    this.sendOperation(id,"TEMPERATURE turn-off");
+                                                });
                                             }
                                         }
                                     }
@@ -75,6 +91,11 @@ public class ParameterModel implements ParameterAPI {
         }
         return promise.future();
     }
+
+    private void sendOperation(String id, String action) {
+        this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
+    }
+
     private Future<Void> saveData(JsonObject message) {
         PlantValue value = new PlantValueImpl(message.getString("id"), new Date(), message.getDouble("value"));
         return this.plantValueModel.postValue(value);

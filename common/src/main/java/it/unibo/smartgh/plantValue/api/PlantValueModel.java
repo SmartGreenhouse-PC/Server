@@ -173,4 +173,17 @@ public class PlantValueModel implements PlantValueAPI {
                 ).onSuccess(res -> promise.complete());
         return promise.future();
     }
+
+    @Override
+    public Future<String> getLastOperation(String id, String parameter) {
+        Promise<String> promise = Promise.promise();
+        WebClient client = WebClient.create(vertx);
+        client.get(OPERATION_PORT, OPERATION_HOST, "/operation/parameter/last")
+                .addQueryParam("greenhouseId", id)
+                .addQueryParam("parameterName", parameter)
+                .send()
+                .onSuccess(res -> promise.complete())
+                .onFailure(promise::fail);
+        return promise.future();
+    }
 }
