@@ -14,6 +14,7 @@ import java.util.Date;
 
 public class ParameterModel implements ParameterAPI {
     private static final String PARAMETER_NAME = "brightness";
+    private static final String TOPIC = "LUMINOSITY";
     private final PlantValueAPI plantValueModel;
 
     public ParameterModel(PlantValueAPI plantValueModel) {
@@ -89,9 +90,8 @@ public class ParameterModel implements ParameterAPI {
         return promise.future();
     }
 
-    private void sendOperation(String id, int newBrigh) {
-        String action = "LUMINOSITY " + newBrigh;
-        this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
+    private void sendOperation(String id, int action) {
+        this.plantValueModel.performAction(id, PARAMETER_NAME, TOPIC + " " + action, Modality.AUTOMATIC.toString());
     }
 
     private Future<Void> saveData(JsonObject message) {
