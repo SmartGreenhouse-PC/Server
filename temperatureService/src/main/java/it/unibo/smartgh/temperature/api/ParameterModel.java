@@ -14,6 +14,7 @@ import java.util.Date;
 
 public class ParameterModel implements ParameterAPI {
     private static final String PARAMETER_NAME = "temperature";
+    private static final String TOPIC = "TEMPERATURE";
     private final PlantValueAPI plantValueModel;
 
     public ParameterModel(PlantValueAPI plantValueModel) {
@@ -51,10 +52,10 @@ public class ParameterModel implements ParameterAPI {
                                         if (modality.equals(Modality.AUTOMATIC)) {
                                             lastOperation.onSuccess(res -> {
                                                 if(!res.split(" ")[1].equals("increase")){
-                                                    this.sendOperation(id, "TEMPERATURE increase");
+                                                    this.sendOperation(id, " increase");
                                                 }
                                             }).onFailure(err -> {
-                                                this.sendOperation(id,"TEMPERATURE increase");
+                                                this.sendOperation(id,"increase");
                                             });
                                         }
                                     } else if (value.compareTo(max) > 0) {
@@ -62,10 +63,10 @@ public class ParameterModel implements ParameterAPI {
                                         if (modality.equals(Modality.AUTOMATIC)) {
                                             lastOperation.onSuccess(res -> {
                                                 if(!res.split(" ")[1].equals("decrease")){
-                                                    this.sendOperation(id, "TEMPERATURE decrease");
+                                                    this.sendOperation(id, "decrease");
                                                 }
                                             }).onFailure(err -> {
-                                                this.sendOperation(id,"TEMPERATURE decrease");
+                                                this.sendOperation(id,"decrease");
                                             });
                                         }
                                     } else {
@@ -73,10 +74,10 @@ public class ParameterModel implements ParameterAPI {
                                             if(modality.equals(Modality.AUTOMATIC)) {
                                                 lastOperation.onSuccess(res -> {
                                                     if(!res.split(" ")[1].equals("turn-off")){
-                                                        this.sendOperation(id, "TEMPERATURE turn-off");
+                                                        this.sendOperation(id, "turn-off");
                                                     }
                                                 }).onFailure(err -> {
-                                                    this.sendOperation(id,"TEMPERATURE turn-off");
+                                                    this.sendOperation(id,"turn-off");
                                                 });
                                             }
                                         }
@@ -93,7 +94,7 @@ public class ParameterModel implements ParameterAPI {
     }
 
     private void sendOperation(String id, String action) {
-        this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
+        this.plantValueModel.performAction(id, PARAMETER_NAME, TOPIC + " " + action, Modality.AUTOMATIC.toString());
     }
 
     private Future<Void> saveData(JsonObject message) {

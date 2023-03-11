@@ -14,6 +14,7 @@ import java.util.Date;
 
 public class ParameterModel implements ParameterAPI {
     private static final String PARAMETER_NAME = "soilMoisture";
+    private static final String TOPIC = "IRRIGATION";
     private final PlantValueAPI plantValueModel;
 
     public ParameterModel(PlantValueAPI plantValueModel) {
@@ -51,10 +52,10 @@ public class ParameterModel implements ParameterAPI {
                                             if (modality.equals(Modality.AUTOMATIC)) {
                                                 lastOperation.onSuccess(res -> {
                                                     if(!res.split(" ")[1].equals("on")){
-                                                        this.sendOperation(id, "IRRIGATION on");
+                                                        this.sendOperation(id, "on");
                                                     }
                                                 }).onFailure(err -> {
-                                                    this.sendOperation(id,"IRRIGATION on");
+                                                    this.sendOperation(id,"on");
                                                 });
                                             }
                                         } else {
@@ -62,10 +63,10 @@ public class ParameterModel implements ParameterAPI {
                                             if (modality.equals(Modality.AUTOMATIC)) {
                                                 lastOperation.onSuccess(res -> {
                                                     if(!res.split(" ")[1].equals("off")){
-                                                        this.sendOperation(id, "IRRIGATION off");
+                                                        this.sendOperation(id, "off");
                                                     }
                                                 }).onFailure(err -> {
-                                                    this.sendOperation(id,"IRRIGATION off");
+                                                    this.sendOperation(id,"off");
                                                 });
                                             }
                                         }
@@ -88,7 +89,7 @@ public class ParameterModel implements ParameterAPI {
     }
 
     private void sendOperation(String id, String action) {
-        this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
+        this.plantValueModel.performAction(id, PARAMETER_NAME, TOPIC + " " + action, Modality.AUTOMATIC.toString());
     }
 
     private Future<Void> saveData(JsonObject message) {
