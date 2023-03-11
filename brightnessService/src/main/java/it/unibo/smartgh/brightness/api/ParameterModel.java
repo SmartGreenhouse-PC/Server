@@ -116,7 +116,7 @@ public class ParameterModel implements ParameterAPI {
     }
 
     private void initializeThingDescription() {
-        InputStream is = BrightnessServiceLauncher.class.getResourceAsStream("/config.properties");
+        InputStream is = ParameterModel.class.getResourceAsStream("/config.properties");
         Properties properties = new Properties();
         try {
             properties.load(is);
@@ -128,7 +128,6 @@ public class ParameterModel implements ParameterAPI {
         int port = Integer.parseInt(properties.getProperty(PARAMETER_NAME + ".port"));
 
         thingDescription.put("@context", "https://webthings.io/schemas/");
-        thingDescription.put("@type", "Light");
         thingDescription.put("id", "http://"+ host + ":" + port +"/"+ PARAMETER_NAME);
         thingDescription.put("title", PARAMETER_NAME);
         thingDescription.put("description", "web connected system to handle the brightness of a greenhouse.");

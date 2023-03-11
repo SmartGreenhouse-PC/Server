@@ -17,4 +17,10 @@ public interface ParameterAPI {
      * @return the future representing the plant value api.
      */
     Future<PlantValueAPI> getPlantValueAPI();
+
+    /**
+     * Gets the thing description of the device.
+     * @return the future containing the thing description.
+     */
+    Future<JsonObject> getThingDescription();
 }

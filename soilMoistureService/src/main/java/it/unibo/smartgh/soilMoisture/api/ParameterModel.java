@@ -9,16 +9,23 @@ import it.unibo.smartgh.plantValue.entity.Modality;
 import it.unibo.smartgh.plantValue.entity.PlantValue;
 import it.unibo.smartgh.plantValue.entity.PlantValueImpl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Properties;
 
 public class ParameterModel implements ParameterAPI {
     private static final String PARAMETER_NAME = "soilMoisture";
     private static final String TOPIC = "IRRIGATION";
     private final PlantValueAPI plantValueModel;
+    private final JsonObject thingDescription;
 
     public ParameterModel(PlantValueAPI plantValueModel) {
         this.plantValueModel = plantValueModel;
+        this.thingDescription = new JsonObject();
+
+        this.initializeThingDescription();
     }
 
     @Override
@@ -88,6 +95,13 @@ public class ParameterModel implements ParameterAPI {
         return promise.future();
     }
 
+    @Override
+    public Future<JsonObject> getThingDescription() {
+        Promise<JsonObject> promise = Promise.promise();
+        promise.complete(this.thingDescription);
+        return promise.future();
+    }
+
     private void sendOperation(String id, String action) {
         this.plantValueModel.performAction(id, PARAMETER_NAME, TOPIC + " " + action, Modality.AUTOMATIC.toString());
     }
@@ -95,5 +109,24 @@ public class ParameterModel implements ParameterAPI {
     private Future<Void> saveData(JsonObject message) {
         PlantValue value = new PlantValueImpl(message.getString("id"), new Date(), message.getDouble("value"));
         return this.plantValueModel.postValue(value);
+    }
+
+    private void initializeThingDescription() {
+        InputStream is = ParameterModel.class.getResourceAsStream("/config.properties");
+        Properties properties = new Properties();
+        try {
+            properties.load(is);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        String host = properties.getProperty(PARAMETER_NAME + ".host");
+        int port = Integer.parseInt(properties.getProperty(PARAMETER_NAME + ".port"));
+
+        thingDescription.put("@context", "https://webthings.io/schemas/");
+        thingDescription.put("id", "http://"+ host + ":" + port +"/"+ PARAMETER_NAME);
+        thingDescription.put("title", PARAMETER_NAME);
+        thingDescription.put("description", "web connected system to handle the soil moisture of a greenhouse.");
+
     }
 }
