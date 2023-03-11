@@ -45,19 +45,30 @@ public class ParameterModel implements ParameterAPI {
                                     Double max = parameter.getMax();
                                     Double value = message.getDouble("value");
                                     String status = "normal";
+                                    Future<String> lastOperation = this.plantValueModel.getLastOperation(id, PARAMETER_NAME);
                                     if (value.compareTo(min) < 0){
                                         status = "alarm";
                                         if (modality.equals(Modality.AUTOMATIC)) {
-                                            int newBrigh = value.compareTo(255.0) >= 0 ? 255 : value.intValue() + 5;
-                                            String action = "LUMINOSITY " + newBrigh;
-                                            this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
+                                            lastOperation.onSuccess(res -> {
+                                                int previousValue = Integer.parseInt(res.split(" ")[1]);
+                                                int newBrigh = value.compareTo(255.0) >= 0 ? 255 : previousValue + 17;
+                                                this.sendOperation(id, newBrigh);
+                                            }).onFailure(err -> {
+                                                int newBrigh = value.compareTo(255.0) >= 0 ? 255 : value.intValue() + 17;
+                                                this.sendOperation(id, newBrigh);
+                                            });
                                         }
                                     }  else if (value.compareTo(max) > 0) {
                                         status = "alarm";
                                         if (modality.equals(Modality.AUTOMATIC)) {
-                                            int newBrigh = value.compareTo(0.0) <= 0 ? 0 : value.intValue() - 5;
-                                            String action = "LUMINOSITY " + newBrigh;
-                                            this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
+                                            lastOperation.onSuccess(res -> {
+                                                int previousValue = Integer.parseInt(res.split(" ")[1]);
+                                                int newBrigh = value.compareTo(255.0) >= 0 ? 255 : previousValue - 17;
+                                                this.sendOperation(id, newBrigh);
+                                            }).onFailure(err -> {
+                                                int newBrigh = value.compareTo(255.0) >= 0 ? 255 : value.intValue() - 17;
+                                                this.sendOperation(id, newBrigh);
+                                            });
                                         }
                                     }
                                     this.plantValueModel.notifyClients(id, PARAMETER_NAME, value, status)
@@ -70,15 +81,21 @@ public class ParameterModel implements ParameterAPI {
         }
         return promise.future();
     }
-    private Future<Void> saveData(JsonObject message) {
-        PlantValue value = new PlantValueImpl(message.getString("id"), new Date(), message.getDouble("value"));
-        return this.plantValueModel.postValue(value);
-    }
 
     @Override
     public Future<PlantValueAPI> getPlantValueAPI() {
         Promise<PlantValueAPI> promise = Promise.promise();
         promise.complete(this.plantValueModel);
         return promise.future();
+    }
+
+    private void sendOperation(String id, int newBrigh) {
+        String action = "LUMINOSITY " + newBrigh;
+        this.plantValueModel.performAction(id, PARAMETER_NAME, action, Modality.AUTOMATIC.toString());
+    }
+
+    private Future<Void> saveData(JsonObject message) {
+        PlantValue value = new PlantValueImpl(message.getString("id"), new Date(), message.getDouble("value"));
+        return this.plantValueModel.postValue(value);
     }
 }
