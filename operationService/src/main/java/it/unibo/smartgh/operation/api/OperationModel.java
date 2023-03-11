@@ -98,6 +98,17 @@ public class OperationModel implements OperationAPI {
         return promise.future();
     }
 
+    @Override
+    public Future<Operation> getLastParameterOperation(String greenhouseId, String parameterName) {
+        Promise<Operation> promise = Promise.promise();
+        try {
+            promise.complete(this.operationController.getLastParameterOperation(greenhouseId, parameterName));
+        } catch (Exception e) {
+            promise.fail(e);
+        }
+        return promise.future();
+    }
+
     private Future<Void> notifyOperation(Operation operation) {
         Promise<Void> promise = Promise.promise();
         WebClient client = WebClient.create(vertx);

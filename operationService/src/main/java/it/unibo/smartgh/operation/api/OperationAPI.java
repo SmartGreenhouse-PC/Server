@@ -44,4 +44,11 @@ public interface OperationAPI {
      * @return a future that will contain the list of retrieved operations.
      */
     Future<List<Operation>> getOperationsInDateRange(String greenhouseId, Date from, Date to, int limit);
+    /**
+     * Retrieves the last operation for the specified parameter in the given greenhouse/
+     * @param greenhouseId the id of the greenhouse to retrieve operations for.
+     * @param parameterName the parameter to filter the operations by.
+     * @return a future that will contain the last operation.
+     */
+    Future<Operation> getLastParameterOperation(String greenhouseId, String parameterName);
 }

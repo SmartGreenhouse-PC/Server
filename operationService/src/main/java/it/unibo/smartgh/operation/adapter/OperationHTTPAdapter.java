@@ -24,6 +24,7 @@ public class OperationHTTPAdapter extends AbstractAdapter<OperationAPI> {
 
     private static final String BASE_PATH = "/operations";
     private static final String GET_OPERATION_PARAMETER = BASE_PATH + "/parameter";
+    private static final String GET_LAST_OPERATION_PARAMETER = GET_OPERATION_PARAMETER + "/last";
     private static final String GET_OPERATION_IN_DATE_RANGE = BASE_PATH + "/date";
     private static final String BAD_REQUEST_MESSAGE = "Bad request: some field is missing or invalid in the provided data.";
     private static final String INTERNAL_SERVER_ERROR = "Internal Server error: cause ";
@@ -54,6 +55,7 @@ public class OperationHTTPAdapter extends AbstractAdapter<OperationAPI> {
             router.get(BASE_PATH).handler(this::handleGetOperationsInGreenhouse);
             router.get(GET_OPERATION_PARAMETER).handler(this::handleGetParameterOperations);
             router.get(GET_OPERATION_IN_DATE_RANGE).handler(this::handleGetOperationsInDateRange);
+            router.get(GET_LAST_OPERATION_PARAMETER).handler(this::handleGetLastParameterOperation);
 
             router.post(BASE_PATH).handler(this::handlePostOperationInGreenhouse);
 
@@ -70,6 +72,24 @@ public class OperationHTTPAdapter extends AbstractAdapter<OperationAPI> {
             ex.printStackTrace();
             System.out.println("API setup failed - " + ex);
             startPromise.fail("API setup failed - " + ex);
+        }
+    }
+
+    private void handleGetLastParameterOperation(RoutingContext ctx) {
+        HttpServerRequest request = ctx.request();
+        HttpServerResponse response = ctx.response();
+        response.putHeader("Content-Type", "application/json");
+        String greenhouseId = request.getParam("greenhouseId");
+        String parameterName = request.getParam("parameterName");
+        if (greenhouseId.isEmpty() || parameterName.isEmpty()) {
+            handleBadRequestResponse(response);
+        }
+        try {
+            Future<Operation> fut = this.getModel().getLastParameterOperation(greenhouseId, parameterName);
+            fut.onSuccess(op -> response.end(gson.toJson(op)))
+                    .onFailure(exception -> handleInternalServerErrorResponse(response, exception));
+        } catch (NumberFormatException e) {
+            handleBadRequestResponse(response);
         }
     }
 

@@ -42,4 +42,11 @@ public interface OperationController {
      * @return a list of operations.
      */
     List<Operation> getOperationsInDateRange(String greenhouseId, Date from, Date to, int limit);
+   /**
+     * Retrieves the last operation for the specified parameter in the given greenhouse/
+     * @param greenhouseId the id of the greenhouse to retrieve operations for.
+     * @param parameterName the parameter to filter the operations by.
+     * @return the last operation.
+     */
+    Operation getLastParameterOperation(String greenhouseId, String parameterName);
 }

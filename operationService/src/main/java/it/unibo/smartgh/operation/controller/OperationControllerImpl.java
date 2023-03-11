@@ -1,6 +1,7 @@
 package it.unibo.smartgh.operation.controller;
 
 import it.unibo.smartgh.operation.entity.Operation;
+import it.unibo.smartgh.operation.entity.OperationImpl;
 import it.unibo.smartgh.operation.persistence.OperationDatabase;
 
 import java.util.Date;
@@ -39,5 +40,11 @@ public class OperationControllerImpl implements OperationController {
     @Override
     public List<Operation> getOperationsInDateRange(String greenhouseId, Date from, Date to, int limit) {
         return this.operationDatabase.getOperationsInDateRange(greenhouseId, from, to, limit);
+    }
+
+    @Override
+    public Operation getLastParameterOperation(String greenhouseId, String parameterName) {
+        List<Operation> operations = this.operationDatabase.getParameterOperations(greenhouseId, parameterName, 1);
+        return operations.get(0);
     }
 }
