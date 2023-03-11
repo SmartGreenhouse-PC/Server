@@ -100,7 +100,7 @@ public class HumidityHTTPAdapter extends AbstractAdapter<ParameterAPI> {
                 .put("title", "new data")
                 .put("type", "string")
                 .put("description", "new humidity data.")
-                .put("unit", "lux")
+                .put("unit", "%")
                 .put("links", new io.vertx.core.json.JsonArray()
                         .add(new JsonObject()
                                 .put("href", "mqtt://broker.mqtt-dashboard.com:1883")

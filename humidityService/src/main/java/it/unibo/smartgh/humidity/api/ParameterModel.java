@@ -117,7 +117,9 @@ public class ParameterModel implements ParameterAPI {
 
     @Override
     public Future<JsonObject> getThingDescription() {
-        return null;
+        Promise<JsonObject> promise = Promise.promise();
+        promise.complete(this.thingDescription);
+        return promise.future();
     }
 
     private void sendOperation(String id, String action) {
