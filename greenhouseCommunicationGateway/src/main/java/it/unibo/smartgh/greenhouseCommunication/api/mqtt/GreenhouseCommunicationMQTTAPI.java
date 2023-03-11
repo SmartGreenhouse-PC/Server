@@ -10,14 +10,6 @@ import io.vertx.mqtt.MqttClient;
 public interface GreenhouseCommunicationMQTTAPI {
 
     /**
-     * Get the thing description.
-     * @param thingId the id of the device.
-     * @return the json object representing the thing description.
-     *
-     */
-    Future<JsonObject> getThingDescription(String thingId);
-
-    /**
      * Forward the new data incoming from the greenhouse microcontroller.
      *
      * @param newGreenhouseData the new data sensed.
