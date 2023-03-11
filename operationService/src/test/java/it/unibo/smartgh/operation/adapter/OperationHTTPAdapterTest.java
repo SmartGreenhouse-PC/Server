@@ -135,6 +135,20 @@ public class OperationHTTPAdapterTest {
     }
 
     @Test
+    public void testGetLastParameterOperation(Vertx vertx, VertxTestContext testContext) {
+        WebClient client = WebClient.create(vertx);
+        client.get(SERVICE_PORT, SERVICE_HOST, "/operations/parameter/last")
+                .addQueryParam("greenhouseId", greenhouseId)
+                .addQueryParam("parameterName", parameter)
+                .send(testContext.succeeding(res -> testContext.verify(() -> {
+                    Operation op = gson.fromJson(res.body().toString(), OperationImpl.class);
+                    assertEquals(greenhouseId, op.getGreenhouseId());
+                    assertEquals(parameter, op.getParameter());
+                    testContext.completeNow();
+                })));
+    }
+
+    @Test
     void testGetOperationsInDateRange(Vertx vertx, VertxTestContext testContext) {
         final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         String fromDate = "2022-01-01";
