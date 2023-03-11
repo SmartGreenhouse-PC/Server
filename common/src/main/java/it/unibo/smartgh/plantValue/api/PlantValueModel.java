@@ -178,11 +178,18 @@ public class PlantValueModel implements PlantValueAPI {
     public Future<String> getLastOperation(String id, String parameter) {
         Promise<String> promise = Promise.promise();
         WebClient client = WebClient.create(vertx);
-        client.get(OPERATION_PORT, OPERATION_HOST, "/operation/parameter/last")
+        client.get(OPERATION_PORT, OPERATION_HOST, "/operations/parameter/last")
                 .addQueryParam("greenhouseId", id)
                 .addQueryParam("parameterName", parameter)
+                .as(BodyCodec.jsonObject())
                 .send()
-                .onSuccess(res -> promise.complete())
+                .onSuccess(res -> {
+                    if(res.statusCode() == 500){
+                        promise.fail("Action empty!");
+                    }else{
+                        promise.complete(res.body().getString("action"));
+                    }
+                })
                 .onFailure(promise::fail);
         return promise.future();
     }
