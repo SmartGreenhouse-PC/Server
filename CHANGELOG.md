@@ -1,3 +1,46 @@
+## [1.3.0](https://github.com/SmartGreenhouse-PC/Server/compare/1.2.1...1.3.0) (2023-03-12)
+
+
+### Features
+
+* add get last parameter operation route ([1a726d8](https://github.com/SmartGreenhouse-PC/Server/commit/1a726d8ac54afaf5d823d1dcd3e36142402c0ac5))
+* add thing description ([6968aec](https://github.com/SmartGreenhouse-PC/Server/commit/6968aec7d59e06a753ae9c2deefb8b6aa55142d0))
+* add thing description brightness ([151f97a](https://github.com/SmartGreenhouse-PC/Server/commit/151f97ac643d193dc0ba3980eeedc2420e3163c2))
+* add thing description humidity ([c5d40b1](https://github.com/SmartGreenhouse-PC/Server/commit/c5d40b1768959ba42dc8ce26352e8b8458af050f))
+
+
+### Style improvements
+
+* remove space ([d6bb560](https://github.com/SmartGreenhouse-PC/Server/commit/d6bb560ff53b04b7954efe0bcd32fb6f68246828))
+
+
+### General maintenance
+
+* **release:** 1.2.0 [skip ci] ([27e76bf](https://github.com/SmartGreenhouse-PC/Server/commit/27e76bfb461dd901a29e3e8d12f8ddadb69c389a))
+* **release:** 1.2.1 [skip ci] ([31f8754](https://github.com/SmartGreenhouse-PC/Server/commit/31f8754b23f74d600926972a8e31c129c5ceef8e))
+* **release:** 1.2.1 [skip ci] ([6884c38](https://github.com/SmartGreenhouse-PC/Server/commit/6884c389756935d4bcae778286a0398ea5dc5f71))
+* space ([a9fb7ee](https://github.com/SmartGreenhouse-PC/Server/commit/a9fb7ee445f34f1e5dddb9df2b8e9c9eca3b2038))
+
+
+### Refactoring
+
+* add perform operation and notify client to brightness service ([a7998d1](https://github.com/SmartGreenhouse-PC/Server/commit/a7998d1e948662fdec0ee69997a838675c76d25f))
+* add thing description return statement ([08fd455](https://github.com/SmartGreenhouse-PC/Server/commit/08fd455d19c82e454b9a8aa30b193721fee9ee76))
+* add topic variable ([4271b9e](https://github.com/SmartGreenhouse-PC/Server/commit/4271b9edb575e7ace536ebdf34ef060704ae0aba))
+* change operation management ([13953f9](https://github.com/SmartGreenhouse-PC/Server/commit/13953f9ed0daadef602b815220b8626fe707c05b))
+* finish refactor brightness main ([b349497](https://github.com/SmartGreenhouse-PC/Server/commit/b349497f9b464e35413bb586e907a82a61d5926b))
+* greenhouse communication forwardNewGreenhouseData ([d98f643](https://github.com/SmartGreenhouse-PC/Server/commit/d98f64355a852f42500a90c4381bce370ad6737c))
+* refactor last operation handle ([3767616](https://github.com/SmartGreenhouse-PC/Server/commit/37676164bd41a59529fe1f158eb798b9a87e5c07))
+* refactor mqtt message format and handler ([cc1df3e](https://github.com/SmartGreenhouse-PC/Server/commit/cc1df3ef4ba0599cb7e415734359e635cd28cfdf))
+* refactor temperature, soilMoisture and humisity services in order to manage new data. Delete managage new data from greenhouse model ([1daee52](https://github.com/SmartGreenhouse-PC/Server/commit/1daee5290a4ff17e6f245fc97e2b162112258adf))
+* start  moving new data received logics from greenhouse to parameter ([ab5a185](https://github.com/SmartGreenhouse-PC/Server/commit/ab5a1853ff4cf0198c069ad05318a496fd26c420))
+* test and start other services refactor ([f6f3bd3](https://github.com/SmartGreenhouse-PC/Server/commit/f6f3bd34d8a26eff3e29b6ab62b99afbf4fdff65))
+
+
+### Documentation
+
+* add documentation to file ([b34b317](https://github.com/SmartGreenhouse-PC/Server/commit/b34b317089d69b509ca785a3dbe78ff837970d87))
+
 ## [1.2.1](https://github.com/SmartGreenhouse-PC/Server/compare/1.2.0...1.2.1) (2023-02-12)
 
 
