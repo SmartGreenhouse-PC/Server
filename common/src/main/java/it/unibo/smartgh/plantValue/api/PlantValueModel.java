@@ -39,6 +39,7 @@ public class PlantValueModel implements PlantValueAPI {
 
     /**
      * Constructor of the plant value model.
+     * @param vertx the Vertx instance of the program.
      * @param plantValueController  the plant value controller.
      */
     public PlantValueModel(Vertx vertx, PlantValueController plantValueController) {
